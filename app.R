@@ -9,14 +9,20 @@
 #------------------ Libraries ---------------
 library(shiny)
 library(bslib)
-#library(dplyr)
+library(shinyWidgets)
+library(dplyr)
 library(shinyjs)
+library(ape)
+library(phytools)
 
 
 
 #------------------ Sources ---------------
 
-source("Modules/Theme/Guane_theme.R")
+source("modules/Theme/Guane_theme.R")
+source("modules/UI/GenMod_UI.R")
+source("modules/Server/GenMod_Server.R")
+source("modules/Functions/GenFunctions.R")
 
 #------------------ UI ---------------
 ui <- navbarPage(title = div( "", img(src = "Picture1.png",
@@ -46,12 +52,15 @@ ui <- navbarPage(title = div( "", img(src = "Picture1.png",
                              tabPanel(id = "PhySignal", title = "Phylogenetic Signal",
                                       tabsetPanel(id="TabsPhySignal",type="tabs",
                                                   tabPanel(id="PhySignalDT",title = "DATA",
-                                                           "dropdown()",
+                                                           #-------------------------------------------Phylo Signal DATA ----------------------------------------------------
                                                            # Use Div to reset panels
                                                            useShinyjs(),
                                                            div(id = "PhySignalDTReset",
                                                                fluidRow(column(10, fluidRow(column(3, fluidRow(sidebarPanel(width = "100%",
-                                                                                                                            p("Setting up", style = "align:center;text-align:center; font-weight: bold"),hr())),
+                                                                                                                            p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
+                                                                                                                            hr(),
+                                                                                                                            PhyloInputUI("PhySignalDT")
+                                                                                                                            )),
                                                                                                    br(),
                                                                                                    fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold"),hr()))),
                                                                                             column(9,fluidRow(column(8,card(full_screen = TRUE, card_header( strong("Main Plot")))),
@@ -60,12 +69,13 @@ ui <- navbarPage(title = div( "", img(src = "Picture1.png",
                                                                         column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
                                                                
                                                                # Finish Div: PhySignalDTReset
-                                                               )
+                                                               ),
+                                                           resetPanelsUI('ResetPhySignalDT'),
                                                            # Finish tabPanel: PhySignalDT
                                                            ),
-                                                  
+                                                  #-------------------------------------------Phylo Signal ANALYSIS ----------------------------------------------------
                                                   tabPanel(id="PhySignalANA",title = "ANALYSIS",
-                                                           "dropdown()",
+                                                          
                                                            # Use Div to reset panels
                                                            useShinyjs(),
                                                            div(id = "PhySignalANAReset",
@@ -79,7 +89,8 @@ ui <- navbarPage(title = div( "", img(src = "Picture1.png",
                                                                         column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
                                                                
                                                                # Finish Div: PhySignalANAReset
-                                                           )
+                                                           ),
+                                                           resetPanelsUI('ResetPhySignalANA'),
                                                            # Finish tabPanel: PhySignalANA
                                                            )
                                                   # Finish tabsetPanel: TabsPhySignal
@@ -89,30 +100,64 @@ ui <- navbarPage(title = div( "", img(src = "Picture1.png",
                              
                              "----",
                              "Ancestral State Estimation",
-                             
+                             #-------------------------------------------ANS Discrete Characters DATA ----------------------------------------------------
                              tabPanel(id = "DisChar", title = "Discrete Characters",
                                       tabsetPanel(id="TabsDisChar",type="tabs",
                                       tabPanel(id="DisCharDT",title = "DATA",
-                                               "dropdown()",
+                                               
                                                # Use Div to reset panels
                                                useShinyjs(),
                                                div(id = "DisCharReset",
                                                    fluidRow(column(10, fluidRow(column(3, fluidRow(sidebarPanel(width = "100%",
-                                                                                                                p("Setting up", style = "align:center;text-align:center; font-weight: bold"),hr())),
+                                                                                                                p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
+                                                                                                                hr(),
+                                                                                                               
+                                                                                                                PhyloInputUI("PhyloDisCharDT"),
+                                                                                                                
+                                                                                                                fluidRow(column(6,aling="center",
+                                                                                                                                materialSwitch(inputId = "ExTreeDisCharDT",label = "Phylo example",
+                                                                                                                                               value = FALSE,status = "info",right = TRUE)),
+                                                                                                                         column(6,align= "right",actionButton(inputId = "importTreeDisCharDT",
+                                                                                                                                                              label = NULL,icon =icon(name = "upload"), 
+                                                                                                                                                              width = "20%"))),
+                                                                                                                hr(),
+                                                                                                                
+                                                                                                                csvInputUI("csvDisCharDT"),
+                                                                                                                
+                                                                                                                fluidRow(column(6,aling="center",
+                                                                                                                                materialSwitch(inputId = "ExCVSDisCharDT",label = "CSV example",
+                                                                                                                                               value = FALSE,status = "info",right = TRUE)),
+                                                                                                                         column(6,align= "right",actionButton(inputId = "importCSVDisCharDT",
+                                                                                                                                                              label = NULL,icon =icon(name = "upload"), 
+                                                                                                                                                              width = "20%"))),
+                                                                                                                hr(),
+                                                                                                                
+                                                                                                                checkNamesUI("chkNameDisCharDT")
+                                                                                                                
+                                                                                                                
+                                                                                                                )),
                                                                                        br(),
                                                                                        fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold"),hr()))),
-                                                                                column(9,fluidRow(column(8,card(full_screen = TRUE, card_header( strong("Main Plot")))),
+                                                                                column(9,fluidRow(column(8,card(full_screen = TRUE, card_header( strong("Main Plot")),
+                                                                                                                plotUI("plotTreeDisCharDT"))),
                                                                                                   column(4, card(full_screen = TRUE, card_header( strong("Data Structure"))),
-                                                                                                         card(full_screen = TRUE, card_header( strong("Messages/Errors")))))))),
+                                                                                                         card(full_screen = TRUE,
+                                                                                                              card_header( strong("Messages/Errors")),
+                                                                                                             infoUI("infoDisCharDT")
+                                                                                                              )
+                                                                                                         
+                                                                                                         ))))),
                                                             column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
                                                    
                                                    # Finish Div: DisCharDTReset
-                                               )
+                                               ),
+                                               resetPanelsUI('ResetDisCharDT'),
                                                # Finish tabPanel: DisCharDT
                                       ),
                                       
+                                      #-------------------------------------------ANS Discrete Characters ANALYSIS ----------------------------------------------------
                                       tabPanel(id="DisCharANA",title = "ANALYSIS",
-                                               "dropdown()",
+                                               
                                                # Use Div to reset panels
                                                useShinyjs(),
                                                div(id = "DisCharANAReset",
@@ -126,7 +171,8 @@ ui <- navbarPage(title = div( "", img(src = "Picture1.png",
                                                             column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
                                                    
                                                    # Finish Div:DisCharANAReset
-                                               )
+                                               ),
+                                               resetPanelsUI('ResetDisCharANA'),
                                                # Finish tabPanel:DisCharANA
                                       )
                                       # Finish tabsetPanel: TabsDisChar
@@ -134,15 +180,18 @@ ui <- navbarPage(title = div( "", img(src = "Picture1.png",
                              # Finish tabPanel: DisChar
                              ),
                              
+                             #-------------------------------------------ANS Continuous Characters DATA ----------------------------------------------------
                              tabPanel(id = "ContChr", " Continuous Characters",
                                       tabsetPanel(id="TabsContChr",type="tabs",
                                                   tabPanel(id="ContChrDT",title = "DATA",
-                                                           "dropdown()",
+                                                           
                                                            # Use Div to reset panels
                                                            useShinyjs(),
                                                            div(id = "ContChrReset",
                                                                fluidRow(column(10, fluidRow(column(3, fluidRow(sidebarPanel(width = "100%",
-                                                                                                                            p("Setting up", style = "align:center;text-align:center; font-weight: bold"),hr())),
+                                                                                                                            p("Setting up", style = "align:center;text-align:center; font-weight: bold"),hr(),
+                                                                                                                            
+                                                                                                                            )),
                                                                                                    br(),
                                                                                                    fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold"),hr()))),
                                                                                             column(9,fluidRow(column(8,card(full_screen = TRUE, card_header( strong("Main Plot")))),
@@ -151,12 +200,13 @@ ui <- navbarPage(title = div( "", img(src = "Picture1.png",
                                                                         column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
                                                                
                                                                # Finish Div: ContChrDTReset
-                                                           )
+                                                           ),
+                                                           resetPanelsUI('ResetContChrDT'),
                                                            # Finish tabPanel: ContChrDT
                                                   ),
                                                   
                                                   tabPanel(id="ContChrANA",title = "ANALYSIS",
-                                                           "dropdown()",
+                                                           
                                                            # Use Div to reset panels
                                                            useShinyjs(),
                                                            div(id = "ContChrANAReset",
@@ -170,7 +220,8 @@ ui <- navbarPage(title = div( "", img(src = "Picture1.png",
                                                                         column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
                                                                
                                                                # Finish Div:ContChrANAReset
-                                                           )
+                                                           ),
+                                                           resetPanelsUI('ResetContChrANA'),
                                                            # Finish tabPanel: ContChrANA
                                                   )
                                                   # Finish tabsetPanel: TabsContChr
@@ -184,7 +235,7 @@ ui <- navbarPage(title = div( "", img(src = "Picture1.png",
                              tabPanel(id = "LTT", title = "Lineages Throught the time",
                                       tabsetPanel(id="TabsLTT",type="tabs",
                                                   tabPanel(id="LTTDT",title = "DATA",
-                                                           "dropdown()",
+                                                           
                                                            # Use Div to reset panels
                                                            useShinyjs(),
                                                            div(id = "ContChrReset",
@@ -198,12 +249,13 @@ ui <- navbarPage(title = div( "", img(src = "Picture1.png",
                                                                         column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
                                                                
                                                                # Finish Div: LTTDTReset
-                                                           )
+                                                           ),
+                                                           resetPanelsUI('ResetLTTDT'),
                                                            # Finish tabPanel: LTTDT
                                                   ),
                                                   
                                                   tabPanel(id="LTTANA",title = "ANALYSIS",
-                                                           "dropdown()",
+                                                           
                                                            # Use Div to reset panels
                                                            useShinyjs(),
                                                            div(id = "LTTANAReset",
@@ -217,7 +269,8 @@ ui <- navbarPage(title = div( "", img(src = "Picture1.png",
                                                                         column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
                                                                
                                                                # Finish Div:LTTReset
-                                                           )
+                                                           ),
+                                                           resetPanelsUI('ResetLTTANA'),
                                                            # Finish tabPanel: LTTANA
                                                   )
                                                   # Finish tabsetPanel: TabsLTT
@@ -228,7 +281,7 @@ ui <- navbarPage(title = div( "", img(src = "Picture1.png",
                              tabPanel(id = "DivMod", "Diversification Models",
                                       tabsetPanel(id="TabsDivMod",type="tabs",
                                                   tabPanel(id="DivModDT",title = "DATA",
-                                                           "dropdown()",
+                                                           
                                                            # Use Div to reset panels
                                                            useShinyjs(),
                                                            div(id = "DivModReset",
@@ -242,12 +295,13 @@ ui <- navbarPage(title = div( "", img(src = "Picture1.png",
                                                                         column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
                                                                
                                                                # Finish Div: DivModReset
-                                                           )
+                                                           ),
+                                                           resetPanelsUI('ResetDivModDT'),
                                                            # Finish tabPanel: DivModDT
                                                   ),
                                                   
                                                   tabPanel(id="DivModANA",title = "ANALYSIS",
-                                                           "dropdown()",
+                                                           
                                                            # Use Div to reset panels
                                                            useShinyjs(),
                                                            div(id = "DivModReset",
@@ -261,7 +315,8 @@ ui <- navbarPage(title = div( "", img(src = "Picture1.png",
                                                                         column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
                                                                
                                                                # Finish Div:DivModReset
-                                                           )
+                                                           ),
+                                                           resetPanelsUI('ResetDivModANA'),
                                                            # Finish tabPanel: DivModANA
                                                   )
                                                   # Finish tabsetPanel: TabsDivMod
@@ -281,7 +336,48 @@ ui <- navbarPage(title = div( "", img(src = "Picture1.png",
 #------------------ Server ---------------
 server <- function(input, output,session) {
   
+  #### ancestral state reconstruction discrete characters
+  
+  #Vectors
+  VarDisCharDT <- reactiveValues()
+  VarDisCharDT$info <- NULL
+  
+  # Info vector
+  infoServer("infoDisCharDT", VarDisCharDT$info)
+
+  # Read Phylo
+  treeDisCharDT <- eventReactive(input$importTreeDisCharDT,{
+    if (input$ExTreeDisCharDT == T){
+    readRDS(file = "examples/anoleTree.RDS")
+    }else{
+    PhyloInputServer("PhyloDisCharDT")}
+  })
+  
+  # Record info Tree
+  
+  observeEvent(input$importTreeDisCharDT, {
+    VarDisCharDT$info <- treeDisCharDT()
+  })
+  
+  # read characters
+  
+  StatesDisChar <- eventReactive(input$importCSVDisCharDT,{
+    if (input$importCSVDisCharDT == T){
+      readRDS(file = 'data/anoleData.RDS')
+    }else{
+      csvInputServer(id = "csvDisCharDT")}
+  })
+
+  
+  # plot phylo
+  
+  
+    plotServer("plotTreeDisCharDT", tree = treeDisCharDT())
  
+ 
+  
+  
+  #Finish server
 }
 
 
