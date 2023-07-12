@@ -11,17 +11,14 @@ library(shiny)
 PhyloInputServer <- function(id){
   moduleServer( id,
     function(input, output, session){
-      #get file
-      userFile <- reactive({
-        req(input$loadTree)
-      })
+     
       # ask if it is nexus or not
-      if (is.nexus( userFile()$datapath) == T) {
-        tree <- read.nexus(file = userFile()$datapath)
+      if (is.nexus( input$loadTree$datapath) == T) {
+        read.nexus(file = input$loadTree$datapath)
       } else {
-        tree <- read.tree(file = userFile()$datapath)
+        tree <- read.tree(file = input$loadTree$datapath)
       }
-      return(tree)
+   
     }
   )
 }
@@ -35,8 +32,8 @@ csvInputServer <- function(id){
                   userFile <- reactive({
                     req(input$loadCsv)
                   })
-                 csv <- read.csv(file = userFile()$datapath,header = T, row.names = 1)
-                  return(csv)
+                read.csv(file = userFile()$datapath,header = T, row.names = 1)
+                  
                 }
   )
 }
@@ -48,11 +45,14 @@ infoServer <- function(id,info){
                function(input, output, session){
               
              output$InfoFunc <- renderPrint({
-               if (class(info) == 'data.frame' || class(info) == 'matrix' || class(info) == 'table') {
-                 head(info, 10L)
-               }else {
-                 print(info)
-               }
+               
+               # if (class(info) == 'data.frame' || class(info) == 'matrix' || class(info) == 'table') {
+               #  obj <- head(info, 10L)
+               # }else {
+               if (is.null(info)) return()
+               print(info)
+             #  }
+               
              })
                }
   )
@@ -65,11 +65,12 @@ plotServer <- function(id, tree){
     function(input, output, session){
       output$plotFunc <- renderPlot( #height = heightDt  , width = widthDt,
         {
-          #req(treeInput())
+          if (is.null(tree)) return()
+          
           plot.phylo(tree,# show.tip.label = input$tipLabels[1],
                                   #cex = input$tipSize[1],use.edge.length = input$branchLength[1], type = input$plotType,
                                  edge.width = 0.8,edge.color = 'grey40')
-          
+         
         })
     }
   )
