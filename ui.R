@@ -162,7 +162,68 @@ navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                         )
                                                                                         
                                                                                  ))))),
-                                                               column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
+                                                               column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr(),
+                                                                                      awesomeCheckbox(inputId = "ViewPlotDisCharDT",label = strong("Display Plot"), 
+                                                                                                      value = T,status = "info"), hr(),
+                                                                                      accordion_panel( title = h5(" \ Tree and edge design"),
+                                                                                                       value = "SetTreeDisCharDT",
+                                                                                                       pickerInput(selected = "phylogram",
+                                                                                                                   inputId = "typeDisCharDT",
+                                                                                                                   label = strong('Sort Tree'),
+                                                                                                                   choices = c("phylogram" , 
+                                                                                                                               "cladogram", "fan","unrooted","radial","tidy"), 
+                                                                                                       ),
+                                                                                                       
+                                                                                                       pickerInput(selected = "regular",
+                                                                                                                   inputId = "ladderizeDisCharDT",
+                                                                                                                   label = strong('Type'),
+                                                                                                                   choices = c("regular", 
+                                                                                                                               "ascending", "descending")
+                                                                                                                   ),
+                                                                                      awesomeCheckbox(inputId = "edgeLenghtDisCharDT",label = strong("Use edge lengths"), 
+                                                                                                      value = T,status = "info"),
+                                                                                      
+                                                                                      numericInput(inputId = "edgeWidthDisCharDT",label = "set edge width",value = 1 ,min =0.1 ,max =10 ,step =0.001 ,width = "40%"),
+                                                                                      
+                                                                                      selectInput(selected = "plain",
+                                                                                                  inputId = "edgetlyDisCharDT",
+                                                                                                  label = strong('Line Type'),
+                                                                                                  choices = c( "plain" = "1" ,  "dashed" = "2", 
+                                                                                                              "dotted" = "3",  "dotdash" = "4", 
+                                                                                                               "longdash" = "5" , "twodash" = "6")
+                                                                                      ),
+                                                                                      
+                                                                                      open = FALSE,icon = icon("greater-than")),
+                                                                                      
+                                                                                      hr(),
+                                                                                      accordion_panel( title = h5(" \ Nodes"),
+                                                                                                       value = "NodesDisCharDT",
+                                                                                                       open = FALSE,icon = icon("greater-than")),
+                                                                                      
+                                                                                      
+                                                                                      hr(),
+                                                                                      
+                                                                                       
+                                                                                      
+                                                                                      accordion_panel( title = h5(" \ Lables"),
+                                                                                                       value = "lablesDisCharDT",
+                                                                                                       awesomeCheckbox(inputId = "tipLabelsDisCharDT",label = strong("Show tip lables"), 
+                                                                                                                       value = T,status = "info"),
+                                                                                                       open = FALSE,icon = icon("greater-than")),
+                                                                                      
+                                                                                      
+                                                                                      hr(),
+                                                                                      
+                                                                                      accordion_panel( title = h5(" \ Margins"),
+                                                                                                       value = "marginsDisCharDT",
+                                                                                                       
+                                                                                                       open = FALSE,icon = icon("greater-than")),
+                                                                                      
+                                                                                      
+                                                                                      hr(),
+                                                                                      
+                                                                                      
+                                                                                      )))
                                                                
                                                                # Finish Div: DisCharDTReset
                                                            ),

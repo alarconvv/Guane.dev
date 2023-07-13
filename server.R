@@ -51,11 +51,25 @@ output$plotDisCharDT <- renderPlot({
   }else if (VarDisCharDT$plotbox == 0){
     return()} 
   else{
-    return(plot.phylo(treeDisCharDT()))
+    
+    if(input$ladderizeDisCharDT == "regular"){
+      tree <-treeDisCharDT()
+    }else if(input$ladderizeDisCharDT == "ascending"){
+      tree <- ladderize(treeDisCharDT(), right = F)
+    }else if(input$ladderizeDisCharDT == "descending"){
+      tree <- ladderize(treeDisCharDT(), right = T)
+    }
+    
+    plot.phylo(tree,plot = input$ViewPlotDisCharDT,
+               use.edge.length = input$edgeLenghtDisCharDT,
+               show.tip.label = input$tipLabelsDisCharDT,
+               type = input$typeDisCharDT, 
+               edge.width = input$edgeWidthDisCharDT,
+               edge.lty = as.numeric(input$edgetlyDisCharDT),
+                
+                )
   }
 })
-
-
 
 ################### Process ############################
 

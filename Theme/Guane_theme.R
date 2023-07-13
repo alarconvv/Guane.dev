@@ -1,4 +1,4 @@
-  theme <- bs_theme(version = 5,bootswatch = "minty", "form-group-margin-bottom"= "0.2rem", 
+  theme <- bs_theme(version = 5,bootswatch = "flat", "form-group-margin-bottom"= "0.2rem", 
                   "enable-rounded" = T) %>% bs_add_rules( 
                     ".navbar.navbar-default {
   background-color: #0d5368 !important;
