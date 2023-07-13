@@ -139,8 +139,15 @@ navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                                                                               label = NULL,icon =icon(name = "upload"), 
                                                                                                                                               width = "25%"))),
                                                                                                 hr(),
-                                                                                                awesomeCheckbox(inputId = "chckNamesDisCharDT",label = "Check tree & data names", 
-                                                                                                  value = F,status = "info")
+                                                                                                awesomeCheckbox(inputId = "chckNamesDisCharDT",label = strong("Check tree & data names"), 
+                                                                                                  value = F,status = "info"),
+                                                                                                uiOutput(outputId = "RslvNamesDisCharDT"),
+                                                                                                hr(),
+                                                                                                selectInput(inputId = "chooseVarDisCharDT",label = strong("Select  your discrete character"), choices = "Select"),
+                                                                                                selectInput(inputId = "chooseTupeDisCharDT",label = strong("Select characther type"), choices = c("Select","monomorphic", "polymorphic"),selected = NULL,multiple = F),
+                                                                                                
+                                                                                                
+                                                                                                
                                                                ),
                                                                br(),
                                                                fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold"),hr()))),

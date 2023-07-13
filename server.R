@@ -22,11 +22,13 @@ VarDisCharDT$plotbox <- NULL
 
 output$infoDisCharDT <- renderPrint({
   req(VarDisCharDT$infobox)
+  if (is.null(VarDisCharDT$infobox)) return()
   print(VarDisCharDT$infobox)
 })
 
 output$srtDisCharDT <- renderPrint({
   req(VarDisCharDT$strbox)
+  if (is.null(VarDisCharDT$strbox)) return()
   print(str(VarDisCharDT$strbox))
 })
 
@@ -34,9 +36,9 @@ output$srtDisCharDT <- renderPrint({
 
 
 observeEvent(input$ResetDisCharDT, {
-  VarDisCharDT$infobox <<- NULL
-  VarDisCharDT$strbox <<- NULL
-  VarDisCharDT$plotbox <<- 0
+  VarDisCharDT$infobox <- NULL
+  VarDisCharDT$strbox <- NULL
+  VarDisCharDT$plotbox <- 0
   reset("DisCharDTReset")
 })
 
@@ -109,24 +111,109 @@ observeEvent(input$loadCSVDisCharDT, {
 
 
 
-#------------------ Check names --------------------
+#------------------ Check names and Solve --------------------
 
-
-ckcnames <- eventReactive(input$chckNamesDisCharDT,{
+# Check names
+ckcnames <- eventReactive(input$chckNamesDisCharDT == T,{
+  req(treeDisCharDT())
+  ckcnames <- geiger::name.check(treeDisCharDT(), csvDisCharDT())
   
-  ckcnames <- name.check(treeDisCharDT(), csvDisCharDT())
   if(length(ckcnames)== 1){
     ckcnames <- "OK, no mismatch in names"
+
   } else{
     ckcnames$message <- "Please, resolve the mismatch"
+    output$RslvNamesDisCharDT <- renderUI({
+      actionButton(inputId = "MismatchDischarDT" ,label = "Resolve mismatch")
+    })
   }
   return(ckcnames)
 })
 
+# Send message to infobox
 observeEvent(input$chckNamesDisCharDT,{
-  
   VarDisCharDT$infobox <- ckcnames()
 })
+
+#Solve mismatch
+
+MatchDisCharDT <- eventReactive(input$MismatchDischarDT, {
+  req(ckcnames())
+  geiger::treedata(treeDisCharDT(), csvDisCharDT())
+})
+
+# Send message to infobox
+observeEvent(input$MismatchDischarDT,{
+  
+  treeDisCharDT <- reactive({req(MatchDisCharDT())
+    MatchDisCharDT()$phy})
+  csvDisCharDT <- reactive({req(MatchDisCharDT())
+    MatchDisCharDT()$data})
+  
+  VarDisCharDT$infobox <- paste("Tips in tree:",length(treeDisCharDT()$phy$tip.label),";", "Tips in data:",nrow(csvDisCharDT()-1))
+  VarDisCharDT$strbox <-  MatchDisCharDT()
+  
+})
+
+
+#------------------ Choose character and type --------------------
+
+#Dynamic input selection (Variables)
+#Note: when there is only one option you should use list(), but there are more than one you could code names() straightforward
+#
+observeEvent(csvDisCharDT(), {
+ numvar <- which(lapply(csvDisCharDT(), class) == 'numeric' | lapply(csvDisCharDT(), class) == 'integer')
+  factvar <- which(lapply(csvDisCharDT(), class) == 'factor' | lapply(csvDisCharDT(), class) == 'character')
+  if (length(numvar) == 0) {
+    if (length(factvar) > 1) {
+      updateSelectInput(session, "chooseVarDisCharDT",
+                        choices=list('Select','Discrete Char'= names(factvar)))
+    } else {
+      updateSelectInput(session, "chooseVarDisCharDT",
+                        choices=list('Select','Discrete Char'= list(names(factvar))))
+    }
+  } else if (length(factvar) == 0) {
+    if (length(numvar) > 1){
+      updateSelectInput(session, "chooseVarDisCharDT",
+                        choices=list('Select','Continuou Char'= names(numvar)))
+    }else{
+      updateSelectInput(session, "chooseVarDisCharDT",
+                        choices=list('Select','Continuou Char'= list(names(numvar))))
+    }
+  } else {
+    if (length(factvar) > 1 & length(numvar) == 1) {
+      updateSelectInput(session, "chooseVarDisCharDT",selected = NULL,
+                        choices = list('Select','Discrete Char'= names(factvar),
+                                       'Continuou Char'= list(names(numvar))))
+    } else if (length(factvar) == 1 & length(numvar) > 1) {
+      updateSelectInput(session, "chooseVarDisCharDT",selected = NULL,
+                        choices=list('Select','Discrete Char'= list(names(factvar)),
+                                     'Continuou Char'= names(numvar)))
+    } else if (length(factvar) == 1 & length(numvar) == 1) {
+      updateSelectInput(session, "chooseVarDisCharDT",selected = NULL,
+                        choices=list('Select','Discrete Char'= list(names(factvar)),'
+                                               Continuou Char'= list(names(numvar))))
+    } else {
+      updateSelectInput(session, "chooseVarDisCharDT",selected = NULL,
+                        choices=list('Select','Discrete Char'= names(factvar),
+                                     'Continuou Char'= names(numvar)))
+    }
+  }
+})
+
+# choose character
+
+charDischarDT <- eventReactive( input$chooseVarDisCharDT,{
+   col <-which(colnames(csvDisCharDT()) == input$chooseVarDisCharDT)
+   return(csvDisCharDT()[,col])
+})
+
+
+
+
+
+
+
 
 
 #Finish server
