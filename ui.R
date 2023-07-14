@@ -167,6 +167,13 @@ navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                                       value = T,status = "info"), hr(),
                                                                                       accordion_panel( title = h5(" \ Tree and edge design"),
                                                                                                        value = "SetTreeDisCharDT",
+                                                                                                       pickerInput(selected = "regular",
+                                                                                                                   inputId = "ladderizeDisCharDT",
+                                                                                                                   label = strong('Type'),
+                                                                                                                   choices = c("regular", 
+                                                                                                                               "ascending", "descending")
+                                                                                                       ),
+                                                                                                       
                                                                                                        pickerInput(selected = "phylogram",
                                                                                                                    inputId = "typeDisCharDT",
                                                                                                                    label = strong('Sort Tree'),
@@ -174,16 +181,21 @@ navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                                                                "cladogram", "fan","unrooted","radial","tidy"), 
                                                                                                        ),
                                                                                                        
-                                                                                                       pickerInput(selected = "regular",
-                                                                                                                   inputId = "ladderizeDisCharDT",
-                                                                                                                   label = strong('Type'),
-                                                                                                                   choices = c("regular", 
-                                                                                                                               "ascending", "descending")
-                                                                                                                   ),
+                                                                                                   
+                                                                                                       conditionalPanel(condition= "input.typeDisCharDT == 'fan' || input.typeDisCharDT == 'radial' ",
+                                                                                                                        numericInput(inputId = "rotateTreeDisCharDT",
+                                                                                                                                     label = "Rotate tree",value = 0 ,min =-360,
+                                                                                                                                     max =360 ,step =0.1 ,width = "40%"),
+                                                                                                                        numericInput(inputId = "openAngleDisCharDT",
+                                                                                                                                     label = "Open angle",
+                                                                                                                                     value = 0.1 ,min =0.1,
+                                                                                                                                     max =360 ,step =0.1 ,width = "40%"),
+                                                                                                                        ),
+                                                                                      
                                                                                       awesomeCheckbox(inputId = "edgeLenghtDisCharDT",label = strong("Use edge lengths"), 
                                                                                                       value = T,status = "info"),
                                                                                       
-                                                                                      numericInput(inputId = "edgeWidthDisCharDT",label = "set edge width",value = 1 ,min =0.1 ,max =10 ,step =0.001 ,width = "40%"),
+                                                                                      numericInput(inputId = "edgeWidthDisCharDT",label = "set edge width",value = 1 ,min =0.1 ,max =10 ,step =0.01 ,width = "40%"),
                                                                                       
                                                                                       selectInput(selected = "plain",
                                                                                                   inputId = "edgetlyDisCharDT",

@@ -51,7 +51,6 @@ output$plotDisCharDT <- renderPlot({
   }else if (VarDisCharDT$plotbox == 0){
     return()} 
   else{
-    
     if(input$ladderizeDisCharDT == "regular"){
       tree <-treeDisCharDT()
     }else if(input$ladderizeDisCharDT == "ascending"){
@@ -60,14 +59,31 @@ output$plotDisCharDT <- renderPlot({
       tree <- ladderize(treeDisCharDT(), right = T)
     }
     
-    plot.phylo(tree,plot = input$ViewPlotDisCharDT,
-               use.edge.length = input$edgeLenghtDisCharDT,
-               show.tip.label = input$tipLabelsDisCharDT,
-               type = input$typeDisCharDT, 
-               edge.width = input$edgeWidthDisCharDT,
-               edge.lty = as.numeric(input$edgetlyDisCharDT),
-                
-                )
+    
+    
+    
+    if(input$typeDisCharDT == "fan" | input$typeDisCharDT == 'radial'  ){
+      plot.phylo(tree,plot = input$ViewPlotDisCharDT,
+                 use.edge.length = input$edgeLenghtDisCharDT,
+                 show.tip.label = input$tipLabelsDisCharDT,
+                 type = input$typeDisCharDT, 
+                 edge.width = input$edgeWidthDisCharDT,
+                 edge.lty = as.numeric(input$edgetlyDisCharDT),
+                rotate.tree = input$rotateTreeDisCharDT,
+                 open.angle = input$openAngleDisCharDT
+      )
+    }else{
+      plot.phylo(tree,plot = input$ViewPlotDisCharDT,
+                 use.edge.length = input$edgeLenghtDisCharDT,
+                 show.tip.label = input$tipLabelsDisCharDT,
+                 type = input$typeDisCharDT, 
+                 edge.width = input$edgeWidthDisCharDT,
+                 edge.lty = as.numeric(input$edgetlyDisCharDT),
+
+                 
+      )
+    }
+   
   }
 })
 
