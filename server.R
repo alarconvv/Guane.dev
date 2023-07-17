@@ -65,22 +65,57 @@ output$plotDisCharDT <- renderPlot({
     if(input$typeDisCharDT == "fan" | input$typeDisCharDT == 'radial'  ){
       plot.phylo(tree,plot = input$ViewPlotDisCharDT,
                  use.edge.length = input$edgeLenghtDisCharDT,
-                 show.tip.label = input$tipLabelsDisCharDT,
                  type = input$typeDisCharDT, 
                  edge.width = input$edgeWidthDisCharDT,
                  edge.lty = as.numeric(input$edgetlyDisCharDT),
-                rotate.tree = input$rotateTreeDisCharDT,
-                 open.angle = input$openAngleDisCharDT
+                rotate.tree = input$rotateTreeDisCharDT,#
+                 open.angle = input$openAngleDisCharDT,#
+                show.node.label = input$nodelabelDisCharDT,
+                node.width = input$nodeWidthDisCharDT,
+                node.lty = input$odeltyDisCharDT,
+                show.tip.label = input$tipLabelsDisCharDT,
+                align.tip.label = input$aligntiplabelDisCharDT,
+                font = as.numeric(input$fontDisCharDT),
+                cex = input$cexDisCharDT,
+                adj = as.numeric(input$adjDisCharDT),
+                srt = input$srtDisCharDT,
+                label.offset = input$labeloffsetDisCharDT,
+                underscore = input$labeloffsetDisCharDT,
+                lab4ut = input$lab4utDisCharDT,
+                #direction = input$directionDisCharDT,
+                no.margin = input$nomarginDisCharDT,
+                #x.lim = input$xlimDisCharDT,
+                #y.lim = input$ylimDisCharDT,
+                direction = input$directionDisCharDT
+                
+                
+                
+                
       )
     }else{
       plot.phylo(tree,plot = input$ViewPlotDisCharDT,
                  use.edge.length = input$edgeLenghtDisCharDT,
-                 show.tip.label = input$tipLabelsDisCharDT,
                  type = input$typeDisCharDT, 
                  edge.width = input$edgeWidthDisCharDT,
                  edge.lty = as.numeric(input$edgetlyDisCharDT),
-
+                 show.node.label = input$nodelabelDisCharDT,
+                 node.width = input$nodeWidthDisCharDT,
+                 node.lty = input$odeltyDisCharDT,
+                 show.tip.label = input$tipLabelsDisCharDT,
+                 align.tip.label = input$aligntiplabelDisCharDT,
+                 font = as.numeric(input$fontDisCharDT),
+                 cex = input$cexDisCharDT,
+                 adj = as.numeric(input$adjDisCharDT),
+                 srt = input$srtDisCharDT,
+                 label.offset = input$labeloffsetDisCharDT,
+                 underscore = input$labeloffsetDisCharDT,
+                 lab4ut = input$lab4utDisCharDT,
+                 no.margin = input$nomarginDisCharDT,
+                 #x.lim = input$xlimDisCharDT,
+                 #y.lim = input$ylimDisCharDT,
+                 direction = input$directionDisCharDT
                  
+          
       )
     }
    

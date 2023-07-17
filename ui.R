@@ -12,6 +12,7 @@ library(bslib)
 library(shinyWidgets)
 library(dplyr)
 library(shinyjs)
+library(esquisse)
 #-----------
 library(ape)
 library(phytools)
@@ -181,6 +182,13 @@ navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                                                                "cladogram", "fan","unrooted","radial","tidy"), 
                                                                                                        ),
                                                                                                        
+                                                                                                       pickerInput(selected = "rightwards",
+                                                                                                                   inputId = "directionDisCharDT",
+                                                                                                                   label = strong('Direction'),
+                                                                                                                   choices = c("rightwards" , 
+                                                                                                                               "leftwards", "upwards",
+                                                                                                                               "downwards"), 
+                                                                                                       ),
                                                                                                    
                                                                                                        conditionalPanel(condition= "input.typeDisCharDT == 'fan' || input.typeDisCharDT == 'radial' ",
                                                                                                                         numericInput(inputId = "rotateTreeDisCharDT",
@@ -192,10 +200,13 @@ navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                                                                      max =360 ,step =0.1 ,width = "40%"),
                                                                                                                         ),
                                                                                       
-                                                                                      awesomeCheckbox(inputId = "edgeLenghtDisCharDT",label = strong("Use edge lengths"), 
+                                                                                      awesomeCheckbox(inputId = "edgeLenghtDisCharDT",
+                                                                                                      label = strong("Use edge lengths"), 
                                                                                                       value = T,status = "info"),
                                                                                       
-                                                                                      numericInput(inputId = "edgeWidthDisCharDT",label = "set edge width",value = 1 ,min =0.1 ,max =10 ,step =0.01 ,width = "40%"),
+                                                                                      numericInput(inputId = "edgeWidthDisCharDT",
+                                                                                                   label = "set edge width",value = 1 ,
+                                                                                                   min =0.1 ,max =10 ,step =0.01 ,width = "40%"),
                                                                                       
                                                                                       selectInput(selected = "plain",
                                                                                                   inputId = "edgetlyDisCharDT",
@@ -208,31 +219,79 @@ navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                       open = FALSE,icon = icon("greater-than")),
                                                                                       
                                                                                       hr(),
-                                                                                      accordion_panel( title = h5(" \ Nodes"),
-                                                                                                       value = "NodesDisCharDT",
-                                                                                                       open = FALSE,icon = icon("greater-than")),
-                                                                                      
-                                                                                      
-                                                                                      hr(),
-                                                                                      
-                                                                                       
-                                                                                      
+
                                                                                       accordion_panel( title = h5(" \ Lables"),
                                                                                                        value = "lablesDisCharDT",
                                                                                                        awesomeCheckbox(inputId = "tipLabelsDisCharDT",label = strong("Show tip lables"), 
                                                                                                                        value = T,status = "info"),
-                                                                                                       open = FALSE,icon = icon("greater-than")),
-                                                                                      
-                                                                                      
+                                                                                                       awesomeCheckbox(inputId = "aligntiplabelDisCharDT",
+                                                                                                                       label = strong("Align tip label"), 
+                                                                                                                       value = F,status = "info"),
+                                                                                                       awesomeCheckbox(inputId = "underscoreDisCharDT",
+                                                                                                                       label = strong("Underscore"), 
+                                                                                                                       value = F,status = "info"),
+                                                                                                       selectInput(selected = "plain text",
+                                                                                                                   inputId = "fontDisCharDT",
+                                                                                                                   label = strong('Font'),
+                                                                                                                   choices = c( "plain text" = "1" ,  "bold" = "2", 
+                                                                                                                                "italic" = "3",  "bold-italic" = "4")),
+                                                                                                       numericInput(inputId = "cexDisCharDT",
+                                                                                                                    label = "size labels",value = 1 ,
+                                                                                                                    min =0.1 ,max =10 ,step =0.001 ,width = "40%"),
+                                                                                                       selectInput(selected = NULL,
+                                                                                                                   inputId = "adjDisCharDT",
+                                                                                                                   label = strong('Justification'),
+                                                                                                                   choices = c( "left-justification" = "0" ,  "centering" = "0.5", 
+                                                                                                                                "right-justification" = "1", NULL)),
+                                                                                                      numericInput(inputId = "srtDisCharDT",
+                                                                                                                   label = "Label rotation",
+                                                                                                                   value = 0.1 ,min =0.1,
+                                                                                                                   max =360 ,step =0.1 ,width = "40%"),
+                                                                                                      numericInput(inputId = "labeloffsetDisCharDT",
+                                                                                                                   label = "Label offset",value = 0.01 ,
+                                                                                                                   min =0.1 ,max =10 ,step =0.001 ,width = "40%"),
+                                                                                                      selectInput(selected = "horizontal",
+                                                                                                                  inputId = "lab4utDisCharDT",
+                                                                                                                  label = strong('Labels for unroot'),
+                                                                                                                  choices = c( "horizontal" ,  "axial")),
+                                                                                                      open = FALSE,icon = icon("greater-than")),
+
                                                                                       hr(),
                                                                                       
                                                                                       accordion_panel( title = h5(" \ Margins"),
                                                                                                        value = "marginsDisCharDT",
+                                                                                                       awesomeCheckbox(inputId = "nomarginDisCharDT",
+                                                                                                                       label = strong("No margin"), 
+                                                                                                                       value = T,status = "info"),
                                                                                                        
+                                                                                                       # numericInput(inputId = "xlimDisCharDT",
+                                                                                                       #              label = "x lim",value = 0.1,
+                                                                                                       #              min =0.1 ,max =10 ,step =0.001 ,width = "40%"),
+                                                                                                       # numericInput(inputId = "ylimDisCharDT",
+                                                                                                       #              label = "y lim",value = 0.1,
+                                                                                                       #              min =0.1 ,max =10 ,step =0.001 ,width = "40%"),
                                                                                                        open = FALSE,icon = icon("greater-than")),
                                                                                       
                                                                                       
                                                                                       hr(),
+                                                                                      
+                                                                                      accordion_panel( title = h5(" \ Nodes"),
+                                                                                                       value = "NodesDisCharDT",
+                                                                                                       awesomeCheckbox(inputId = "nodelabelDisCharDT",
+                                                                                                                       label = strong("Show node label"), 
+                                                                                                                       value = F,status = "info"),
+                                                                                                       
+                                                                                                       numericInput(inputId = "nodeWidthDisCharDT",
+                                                                                                                    label = "Node width",value = 1 ,
+                                                                                                                    min =0.1 ,max =10 ,step =0.01 ,width = "40%"),
+                                                                                                       
+                                                                                                       selectInput(selected = "plain",
+                                                                                                                   inputId = "nodeltyDisCharDT",
+                                                                                                                   label = strong('Line Type'),
+                                                                                                                   choices = c( "plain" = "1" ,  "dashed" = "2", 
+                                                                                                                                "dotted" = "3",  "dotdash" = "4", 
+                                                                                                                                "longdash" = "5" , "twodash" = "6")),
+                                                                                                       open = FALSE,icon = icon("greater-than")),
                                                                                       
                                                                                       
                                                                                       )))
