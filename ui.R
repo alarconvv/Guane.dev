@@ -13,6 +13,7 @@ library(shinyWidgets)
 library(dplyr)
 library(shinyjs)
 library(esquisse)
+library(shinyAce)
 #-----------
 library(ape)
 library(phytools)
@@ -28,7 +29,7 @@ source("Theme/Guane_theme.R")
 
 
 #------------------ UI ---------------
-navbarPage(title = div( "", img(src = "Picture1.png",
+shinyUI(navbarPage(title = div( "", img(src = "Picture1.png",
                                       id = "simulation",
                                       height = "75px",
                                       width = "70px",
@@ -44,68 +45,251 @@ navbarPage(title = div( "", img(src = "Picture1.png",
                  
                  # Module  to modify adminlte
                  header=  tags$style(HTML(".nav>li>a:active, .nav>li>a:focus, .nav>li>a:hover { background: #0d4d6100;}")),
-                 
+          
                  #---------------- Collapsible Menu ---------------
                  
-                 #Intro Panel
+           #---------------- Intro Panel ---------------
                  tabPanel(id = "Gintro",title =  "Intro"),
                  
+           #---------------- Method Panels ---------------
                  # Collapsible panels
                  navbarMenu( title = "Methods",menuName = "GnavbarMenu",
+                                                  #---------------- Phylo Signal ---------------
                              tabPanel(id = "PhySignal", title = "Phylogenetic Signal",
                                       tabsetPanel(id="TabsPhySignal",type="tabs",
+                                                  #-------------------------------------------Phylo Signal DATA ----------------------------------------------------
                                                   tabPanel(id="PhySignalDT",title = "DATA",
-                                                           #-------------------------------------------Phylo Signal DATA ----------------------------------------------------
                                                            # Use Div to reset panels
                                                            useShinyjs(),
                                                            div(id = "PhySignalDTReset",
-                                                               fluidRow(column(10, fluidRow(column(3, fluidRow(sidebarPanel(width = "100%",
-                                                                                                                            p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
-                                                                                                                            hr(),
-                                                                                                                            
-                                                               )),
-                                                               br(),
-                                                               fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold"),hr()))),
-                                                               column(9,fluidRow(column(8,card(full_screen = TRUE, card_header( strong("Main Plot")))),
-                                                                                 column(4, card(full_screen = TRUE, card_header( strong("Data Structure"))),
-                                                                                        card(full_screen = TRUE, card_header( strong("Messages/Errors")))))))),
-                                                               column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
+                                                               fluidRow(
+                                                                 column(10, 
+                                                                        fluidRow(
+                                                                          column(3,sidebarPanel(width = "100%",
+                                                                                                p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
+                                                                                                hr(),
+                                                                                                
+                                                                                                
+                                                                          )),
+                                                                          column(9,fluidRow(column(8,card(height = "680px",full_screen = TRUE, card_header( strong("Main Plot")),
+                                                                                                          card_body( plotOutput("plotPhySignalDT", inline = T)),
+                                                                          )),
+                                                                          column(4, card(full_screen = TRUE, card_header( strong("Data Structure")),
+                                                                                         verbatimTextOutput("srtPhySignalDT")),
+                                                                                 card(full_screen = TRUE,
+                                                                                      card_header( strong("Messages/Errors")),
+                                                                                      verbatimTextOutput("infoPhySignalDT"))
+                                                                                 
+                                                                          ))))),
+                                                                 column(2, sidebarPanel(width = "100%",p("Graphic Controls", style = "align:center;text-align:center; font-weight: bold"),hr(),
+                                                                                        awesomeCheckbox(inputId = "ViewPlotPhySignalDT",label = strong("Display Plot"), 
+                                                                                                        value = T,status = "info"), hr(),
+                                                                                        sliderInput(inputId = "HeightPhySignalDT" ,
+                                                                                                    label = " Height",min =0 ,max = 10000,value = 400),
+                                                                                        sliderInput(inputId = "WidthPhySignalDT" ,
+                                                                                                    label = " Width",min =0 ,max = 10000,value = 600 ), 
+                                                                                        hr(),
+                                                                                        accordion_panel( title = h5(" \ Tree and edge design"),
+                                                                                                         value = "SetTreePhySignalDT",
+                                                                                                         
+                                                                                                         
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        hr(),
+                                                                                        
+                                                                                        accordion_panel( title = h5(" \ Lables"),
+                                                                                                         value = "labels PhySignalDT",
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        hr(),
+                                                                                        
+                                                                                        accordion_panel( title = h5(" \ Margins"),
+                                                                                                         value = "marginsPhySignalDT",
+                                                                                                         
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        
+                                                                                        hr(),
+                                                                                        
+                                                                                        accordion_panel( title = h5(" \ Nodes"),
+                                                                                                         value = "NodesPhySignalDT",
+                                                                                                         
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        
+                                                                 ),fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold")))
+                                                                 ))
                                                                
                                                                # Finish Div: PhySignalDTReset
                                                            ),
                                                            
+                                                           actionButton("ResetPhySignalDT",width = "100%",label = "Restart initial values")
                                                            # Finish tabPanel: PhySignalDT
                                                   ),
                                                   #-------------------------------------------Phylo Signal ANALYSIS ----------------------------------------------------
                                                   tabPanel(id="PhySignalANA",title = "ANALYSIS",
-                                                           
-                                                           # Use Div to reset panels
-                                                           useShinyjs(),
-                                                           div(id = "PhySignalANAReset",
-                                                               fluidRow(column(10, fluidRow(column(3, fluidRow(sidebarPanel(width = "100%",
-                                                                                                                            p("Setting up", style = "align:center;text-align:center; font-weight: bold"),hr())),
-                                                                                                   br(),
-                                                                                                   fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold"),hr()))),
-                                                                                            column(9,fluidRow(column(7,card(full_screen = TRUE, card_header( strong("Main Plot")))),
-                                                                                                              column(5, card(full_screen = TRUE, card_header( strong("Data Structure"))),
-                                                                                                                     card(full_screen = TRUE, card_header( strong("Messages/Errors")))))))),
-                                                                        column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
-                                                               
-                                                               # Finish Div: PhySignalANAReset
-                                                           ),
-                                                           
+                                                           tabsetPanel(id="PillsDiverModANA",type="pills",
+                                                                       
+                                                  #-------------------------------------------Phylo Signal ANALYSIS: Maxumum Likelihood ----------------------------------------------------
+                                                                       tabPanel(id="MLPhySignalANA",title = "Maxumum Likelihood",
+                                                            # Use Div to reset panels
+                                                            useShinyjs(),
+                                                            div(id = "MLPhySignalANAReset",
+                                                                fluidRow(
+                                                                  column(10, 
+                                                                         fluidRow(
+                                                                           column(3,sidebarPanel(width = "100%",
+                                                                                                 p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
+                                                                                                 hr(),
+                                                                                                 
+                                                                                                 
+                                                                           )),
+                                                                           column(9,fluidRow(column(8,card(height = "680px",full_screen = TRUE, card_header( strong("Main Plot")),
+                                                                                                           card_body( plotOutput("plotMLPhySignalANA", inline = T)),
+                                                                           )),
+                                                                           column(4, card(full_screen = TRUE, card_header( strong("Data Structure")),
+                                                                                          verbatimTextOutput("srtMLPhySignalANA")),
+                                                                                  card(full_screen = TRUE,
+                                                                                       card_header( strong("Messages/Errors")),
+                                                                                       verbatimTextOutput("infoMLPhySignalANA"))
+                                                                                  
+                                                                           ))))),
+                                                                  column(2, sidebarPanel(width = "100%",p("Graphic Controls", style = "align:center;text-align:center; font-weight: bold"),hr(),
+                                                                                         awesomeCheckbox(inputId = "ViewPlotMLPhySignalANA",label = strong("Display Plot"), 
+                                                                                                         value = T,status = "info"), hr(),
+                                                                                         sliderInput(inputId = "HeightMLPhySignalANA" ,
+                                                                                                     label = " Height",min =0 ,max = 10000,value = 400),
+                                                                                         sliderInput(inputId = "WidthMLPhySignalANA" ,
+                                                                                                     label = " Width",min =0 ,max = 10000,value = 600 ), 
+                                                                                         hr(),
+                                                                                         accordion_panel( title = h5(" \ Tree and edge design"),
+                                                                                                          value = "SetTreeMLPhySignalANA",
+                                                                                                          
+                                                                                                          
+                                                                                                          open = FALSE,icon = icon("greater-than")),
+                                                                                         
+                                                                                         hr(),
+                                                                                         
+                                                                                         accordion_panel( title = h5(" \ Lables"),
+                                                                                                          value = "labels MLPhySignalANA",
+                                                                                                          open = FALSE,icon = icon("greater-than")),
+                                                                                         
+                                                                                         hr(),
+                                                                                         
+                                                                                         accordion_panel( title = h5(" \ Margins"),
+                                                                                                          value = "marginsMLPhySignalANA",
+                                                                                                          
+                                                                                                          open = FALSE,icon = icon("greater-than")),
+                                                                                         
+                                                                                         
+                                                                                         hr(),
+                                                                                         
+                                                                                         accordion_panel( title = h5(" \ Nodes"),
+                                                                                                          value = "NodesMLPhySignalANA",
+                                                                                                          
+                                                                                                          open = FALSE,icon = icon("greater-than")),
+                                                                                         
+                                                                                         
+                                                                  ),fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold")))
+                                                                  ))
+                                                                
+                                                                # Finish Div: MLPhySignalANAReset
+                                                            ),
+                                                            
+                                                            actionButton("ResetMLPhySignalANA",width = "100%",label = "Restart initial values")
+                                                            #Finish TabPanel: MLPhySignalANA           
+                                                            ),
+                                                            
+                                                            
+                                                  #-------------------------------------------Phylo Signal ANALYSIS: MCMC ----------------------------------------------------
+                                                            tabPanel(id="BIPhySignalANA",title = "Stochastic mapping",
+                                                                     # Use Div to reset panels
+                                                                     useShinyjs(),
+                                                                     div(id = "BIPhySignalANAReset",
+                                                                         fluidRow(
+                                                                           column(10, 
+                                                                                  fluidRow(
+                                                                                    column(3,sidebarPanel(width = "100%",
+                                                                                                          p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
+                                                                                                          hr(),
+                                                                                                          
+                                                                                                          
+                                                                                    )),
+                                                                                    column(9,fluidRow(column(8,card(height = "680px",full_screen = TRUE, card_header( strong("Main Plot")),
+                                                                                                                    card_body( plotOutput("plotBIPhySignalANA", inline = T)),
+                                                                                    )),
+                                                                                    column(4, card(full_screen = TRUE, card_header( strong("Data Structure")),
+                                                                                                   verbatimTextOutput("srtBIPhySignalANA")),
+                                                                                           card(full_screen = TRUE,
+                                                                                                card_header( strong("Messages/Errors")),
+                                                                                                verbatimTextOutput("infoBIPhySignalANA"))
+                                                                                           
+                                                                                    ))))),
+                                                                           column(2, sidebarPanel(width = "100%",p("Graphic Controls", style = "align:center;text-align:center; font-weight: bold"),hr(),
+                                                                                                  awesomeCheckbox(inputId = "ViewPlotBIPhySignalANA",label = strong("Display Plot"), 
+                                                                                                                  value = T,status = "info"), hr(),
+                                                                                                  sliderInput(inputId = "HeightBIPhySignalANA" ,
+                                                                                                              label = " Height",min =0 ,max = 10000,value = 400),
+                                                                                                  sliderInput(inputId = "WidthBIPhySignalANA" ,
+                                                                                                              label = " Width",min =0 ,max = 10000,value = 600 ), 
+                                                                                                  hr(),
+                                                                                                  accordion_panel( title = h5(" \ Tree and edge design"),
+                                                                                                                   value = "SetTreeBIPhySignalANA",
+                                                                                                                   
+                                                                                                                   
+                                                                                                                   open = FALSE,icon = icon("greater-than")),
+                                                                                                  
+                                                                                                  hr(),
+                                                                                                  
+                                                                                                  accordion_panel( title = h5(" \ Lables"),
+                                                                                                                   value = "labels BIPhySignalANA",
+                                                                                                                   open = FALSE,icon = icon("greater-than")),
+                                                                                                  
+                                                                                                  hr(),
+                                                                                                  
+                                                                                                  accordion_panel( title = h5(" \ Margins"),
+                                                                                                                   value = "marginsBIPhySignalANA",
+                                                                                                                   
+                                                                                                                   open = FALSE,icon = icon("greater-than")),
+                                                                                                  
+                                                                                                  
+                                                                                                  hr(),
+                                                                                                  
+                                                                                                  accordion_panel( title = h5(" \ Nodes"),
+                                                                                                                   value = "NodesBIPhySignalANA",
+                                                                                                                   
+                                                                                                                   open = FALSE,icon = icon("greater-than")),
+                                                                                                  
+                                                                                                  
+                                                                           ),fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold")))
+                                                                           ))
+                                                                         
+                                                                         # Finish Div: BIPhySignalANAReset
+                                                                     ),
+                                                                     
+                                                                     actionButton("ResetBIPhySignalANA",width = "100%",label = "Restart initial values")
+                                                                     #Finish TabPanel: BIPhySignalANA           
+                                                            ),
+                                                            
+                                                            
+                                                            #Finish TabsetPanel: PillsPhySignalANA
+                                                            )
                                                            # Finish tabPanel: PhySignalANA
-                                                  )
+                                                           )
+                                                  
+                                                  
+                                                  
                                                   # Finish tabsetPanel: TabsPhySignal
-                                      )
+                                                  )
                                       # Finish tabPanel: PhySignal
-                             ),
+                                      ),
                              
                              "----",
                              "Ancestral State Estimation",
-                             #-------------------------------------------ANS Discrete Characters DATA ----------------------------------------------------
+                                                  #-------------------------------------------ANS Discrete Characters----------------------------------------------------
                              tabPanel(id = "DisChar", title = "Discrete Characters",
                                       tabsetPanel(id="TabsDisChar",type="tabs",
+                                                  #-------------------------------------------ANS Discrete Characters DATA ----------------------------------------------------
                                                   tabPanel(id="DisCharDT",title = "DATA",
                                                            
                                                            # Use Div to reset panels
@@ -149,11 +333,9 @@ navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                                 
                                                                                                 
                                                                                                 
-                                                               ),
-                                                               br(),
-                                                               fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold"),hr()))),
-                                                               column(9,fluidRow(column(8,card(full_screen = TRUE, card_header( strong("Main Plot")),
-                                                                                               card_body( plotOutput("plotDisCharDT")),
+                                                               ),),
+                                                               column(9,fluidRow(column(8,card(height = "680px",full_screen = TRUE, card_header( strong("Main Plot")),
+                                                                                               card_body( plotOutput("plotDisCharDT", inline = T)),
                                                                                               )),
                                                                                  column(4, card(full_screen = TRUE, card_header( strong("Data Structure")),
                                                                                                 verbatimTextOutput("srtDisCharDT")),
@@ -163,9 +345,14 @@ navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                         )
                                                                                         
                                                                                  ))))),
-                                                               column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr(),
+                                                               column(2, sidebarPanel(width = "100%",p("Graphic Controls", style = "align:center;text-align:center; font-weight: bold"),hr(),
                                                                                       awesomeCheckbox(inputId = "ViewPlotDisCharDT",label = strong("Display Plot"), 
                                                                                                       value = T,status = "info"), hr(),
+                                                                                      sliderInput(inputId = "HeightDisCharDT" ,
+                                                                                                  label = " Height",min =0 ,max = 10000,value = 400),
+                                                                                      sliderInput(inputId = "WidthDisCharDT" ,
+                                                                                                  label = " Width",min =0 ,max = 10000,value = 600 ), 
+                                                                                      hr(),
                                                                                       accordion_panel( title = h5(" \ Tree and edge design"),
                                                                                                        value = "SetTreeDisCharDT",
                                                                                                        pickerInput(selected = "regular",
@@ -294,7 +481,8 @@ navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                                        open = FALSE,icon = icon("greater-than")),
                                                                                       
                                                                                       
-                                                                                      )))
+                                                                                      ),fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold")))
+                                                                      ))
                                                                
                                                                # Finish Div: DisCharDTReset
                                                            ),
@@ -309,173 +497,699 @@ navbarPage(title = div( "", img(src = "Picture1.png",
                                                            # Use Div to reset panels
                                                            useShinyjs(),
                                                            div(id = "DisCharANAReset",
-                                                               fluidRow(column(10, fluidRow(column(3, fluidRow(sidebarPanel(width = "100%",
-                                                                                                                            p("Setting up", style = "align:center;text-align:center; font-weight: bold"),hr())),
-                                                                                                   br(),
-                                                                                                   fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold"),hr()))),
-                                                                                            column(9,fluidRow(column(7,card(full_screen = TRUE, card_header( strong("Main Plot")))),
-                                                                                                              column(5, card(full_screen = TRUE, card_header( strong("Data Structure"))),
-                                                                                                                     card(full_screen = TRUE, card_header( strong("Messages/Errors")))))))),
-                                                                        column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
+                                                               fluidRow(
+                                                                 column(10, 
+                                                                        fluidRow(
+                                                                          column(3,sidebarPanel(width = "100%",
+                                                                                                p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
+                                                                                                hr(),
+                                                                                                
+                                                                                                
+                                                                          )),
+                                                                          column(9,fluidRow(column(8,card(height = "680px",full_screen = TRUE, card_header( strong("Main Plot")),
+                                                                                                          card_body( plotOutput("plotDisCharANA", inline = T)),
+                                                                          )),
+                                                                          column(4, card(full_screen = TRUE, card_header( strong("Data Structure")),
+                                                                                         verbatimTextOutput("srtDisCharANA")),
+                                                                                 card(full_screen = TRUE,
+                                                                                      card_header( strong("Messages/Errors")),
+                                                                                      verbatimTextOutput("infoDisCharANA"))
+                                                                                 
+                                                                          ))))),
+                                                                 column(2, sidebarPanel(width = "100%",p("Graphic Controls", style = "align:center;text-align:center; font-weight: bold"),hr(),
+                                                                                        awesomeCheckbox(inputId = "ViewPlotDisCharANA",label = strong("Display Plot"), 
+                                                                                                        value = T,status = "info"), hr(),
+                                                                                        sliderInput(inputId = "HeightDisCharANA" ,
+                                                                                                    label = " Height",min =0 ,max = 10000,value = 400),
+                                                                                        sliderInput(inputId = "WidthDisCharANA" ,
+                                                                                                    label = " Width",min =0 ,max = 10000,value = 600 ), 
+                                                                                        hr(),
+                                                                                        accordion_panel( title = h5(" \ Tree and edge design"),
+                                                                                                         value = "SetTreeDisCharANA",
+                                                                                                        
+                                                                                                         
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        hr(),
+                                                                                        
+                                                                                        accordion_panel( title = h5(" \ Lables"),
+                                                                                                         value = "labels DisCharANA",
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        hr(),
+                                                                                        
+                                                                                        accordion_panel( title = h5(" \ Margins"),
+                                                                                                         value = "marginsDisCharANA",
+                                                                                                        
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        
+                                                                                        hr(),
+                                                                                        
+                                                                                        accordion_panel( title = h5(" \ Nodes"),
+                                                                                                         value = "NodesDisCharANA",
+                                                                                                         
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        
+                                                                 ),fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold")))
+                                                                 ))
                                                                
-                                                               # Finish Div:DisCharANAReset
+                                                               # Finish Div: DisCharANAReset
                                                            ),
-                                                          
-                                                           # Finish tabPanel:DisCharANA
-                                                  )
+                                                           
+                                                           actionButton("ResetDisCharANA",width = "100%",label = "Restart initial values")
+                                                           # Finish tabPanel: DisCharANA
+                                                  ),
+                                                  
+                                                  
+                                                  
                                                   # Finish tabsetPanel: TabsDisChar
                                       )
                                       # Finish tabPanel: DisChar
                              ),
                              
-                             #-------------------------------------------ANS Continuous Characters DATA ----------------------------------------------------
-                             tabPanel(id = "ContChr", " Continuous Characters",
-                                      tabsetPanel(id="TabsContChr",type="tabs",
-                                                  tabPanel(id="ContChrDT",title = "DATA",
-                                                           
+                                                  #-------------------------------------------ANS Continuous Characters ----------------------------------------------------
+                             tabPanel(id = "ConChar", title = "Continuous Characters",
+                                      tabsetPanel(id="TabsConChar",type="tabs",
+                                                  #-------------------------------------------ANS Continuous Characters DATA----------------------------------------------------
+                                                  tabPanel(id="ConCharDT",title = "DATA",
                                                            # Use Div to reset panels
                                                            useShinyjs(),
-                                                           div(id = "ContChrReset",
-                                                               fluidRow(column(10, fluidRow(column(3, fluidRow(sidebarPanel(width = "100%",
-                                                                                                                            p("Setting up", style = "align:center;text-align:center; font-weight: bold"),hr(),
-                                                                                                                            
-                                                               )),
-                                                               br(),
-                                                               fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold"),hr()))),
-                                                               column(9,fluidRow(column(8,card(full_screen = TRUE, card_header( strong("Main Plot")))),
-                                                                                 column(4, card(full_screen = TRUE, card_header( strong("Data Structure"))),
-                                                                                        card(full_screen = TRUE, card_header( strong("Messages/Errors")))))))),
-                                                               column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
+                                                           div(id = "ConCharDTReset",
+                                                               fluidRow(
+                                                                 column(10, 
+                                                                        fluidRow(
+                                                                          column(3,sidebarPanel(width = "100%",
+                                                                                                p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
+                                                                                                hr(),
+                                                                                                
+                                                                                                
+                                                                          )),
+                                                                          column(9,fluidRow(column(8,card(height = "680px",full_screen = TRUE, card_header( strong("Main Plot")),
+                                                                                                          card_body( plotOutput("plotConCharDT", inline = T)),
+                                                                          )),
+                                                                          column(4, card(full_screen = TRUE, card_header( strong("Data Structure")),
+                                                                                         verbatimTextOutput("srtConCharDT")),
+                                                                                 card(full_screen = TRUE,
+                                                                                      card_header( strong("Messages/Errors")),
+                                                                                      verbatimTextOutput("infoConCharDT"))
+                                                                                 
+                                                                          ))))),
+                                                                 column(2, sidebarPanel(width = "100%",p("Graphic Controls", style = "align:center;text-align:center; font-weight: bold"),hr(),
+                                                                                        awesomeCheckbox(inputId = "ViewPlotConCharDT",label = strong("Display Plot"), 
+                                                                                                        value = T,status = "info"), hr(),
+                                                                                        sliderInput(inputId = "HeightConCharDT" ,
+                                                                                                    label = " Height",min =0 ,max = 10000,value = 400),
+                                                                                        sliderInput(inputId = "WidthConCharDT" ,
+                                                                                                    label = " Width",min =0 ,max = 10000,value = 600 ), 
+                                                                                        hr(),
+                                                                                        accordion_panel( title = h5(" \ Tree and edge design"),
+                                                                                                         value = "SetTreeConCharDT",
+                                                                                                         
+                                                                                                         
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        hr(),
+                                                                                        
+                                                                                        accordion_panel( title = h5(" \ Lables"),
+                                                                                                         value = "labels ConCharDT",
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        hr(),
+                                                                                        
+                                                                                        accordion_panel( title = h5(" \ Margins"),
+                                                                                                         value = "marginsConCharDT",
+                                                                                                         
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        
+                                                                                        hr(),
+                                                                                        
+                                                                                        accordion_panel( title = h5(" \ Nodes"),
+                                                                                                         value = "NodesConCharDT",
+                                                                                                         
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        
+                                                                 ),fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold")))
+                                                                 ))
                                                                
-                                                               # Finish Div: ContChrDTReset
+                                                               # Finish Div: ConCharDTReset
                                                            ),
-                                                          
-                                                           # Finish tabPanel: ContChrDT
+                                                           
+                                                           actionButton("ResetConCharDT",width = "100%",label = "Restart initial values")
+                                                           # Finish tabPanel: ConCharDT
                                                   ),
-                                                  
-                                                  tabPanel(id="ContChrANA",title = "ANALYSIS",
-                                                           
-                                                           # Use Div to reset panels
-                                                           useShinyjs(),
-                                                           div(id = "ContChrANAReset",
-                                                               fluidRow(column(10, fluidRow(column(3, fluidRow(sidebarPanel(width = "100%",
-                                                                                                                            p("Setting up", style = "align:center;text-align:center; font-weight: bold"),hr())),
-                                                                                                   br(),
-                                                                                                   fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold"),hr()))),
-                                                                                            column(9,fluidRow(column(7,card(full_screen = TRUE, card_header( strong("Main Plot")))),
-                                                                                                              column(5, card(full_screen = TRUE, card_header( strong("Data Structure"))),
-                                                                                                                     card(full_screen = TRUE, card_header( strong("Messages/Errors")))))))),
-                                                                        column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
-                                                               
-                                                               # Finish Div:ContChrANAReset
-                                                           ),
-                                                           
-                                                           # Finish tabPanel: ContChrANA
+                                                  #-------------------------------------------ANS Continuous Characters ANALYSIS ----------------------------------------------------
+                                                  tabPanel(id="ConCharANA",title = "ANALYSIS",
+                                                           tabsetPanel(id="PillsDiverModANA",type="pills",
+                                                                       
+                                                  #-------------------------------------------ANS Characters ANALYSIS: Maxumum Likelihood ----------------------------------------------------
+                                                                       tabPanel(id="MLConCharANA",title = "Maxumum Likelihood",
+                                                                                # Use Div to reset panels
+                                                                                useShinyjs(),
+                                                                                div(id = "MLConCharANAReset",
+                                                                                    fluidRow(
+                                                                                      column(10, 
+                                                                                             fluidRow(
+                                                                                               column(3,sidebarPanel(width = "100%",
+                                                                                                                     p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
+                                                                                                                     hr(),
+                                                                                                                     
+                                                                                                                     
+                                                                                               )),
+                                                                                               column(9,fluidRow(column(8,card(height = "680px",full_screen = TRUE, card_header( strong("Main Plot")),
+                                                                                                                               card_body( plotOutput("plotMLConCharANA", inline = T)),
+                                                                                               )),
+                                                                                               column(4, card(full_screen = TRUE, card_header( strong("Data Structure")),
+                                                                                                              verbatimTextOutput("srtMLConCharANA")),
+                                                                                                      card(full_screen = TRUE,
+                                                                                                           card_header( strong("Messages/Errors")),
+                                                                                                           verbatimTextOutput("infoMLConCharANA"))
+                                                                                                      
+                                                                                               ))))),
+                                                                                      column(2, sidebarPanel(width = "100%",p("Graphic Controls", style = "align:center;text-align:center; font-weight: bold"),hr(),
+                                                                                                             awesomeCheckbox(inputId = "ViewPlotMLConCharANA",label = strong("Display Plot"), 
+                                                                                                                             value = T,status = "info"), hr(),
+                                                                                                             sliderInput(inputId = "HeightMLConCharANA" ,
+                                                                                                                         label = " Height",min =0 ,max = 10000,value = 400),
+                                                                                                             sliderInput(inputId = "WidthMLConCharANA" ,
+                                                                                                                         label = " Width",min =0 ,max = 10000,value = 600 ), 
+                                                                                                             hr(),
+                                                                                                             accordion_panel( title = h5(" \ Tree and edge design"),
+                                                                                                                              value = "SetTreeMLConCharANA",
+                                                                                                                              
+                                                                                                                              
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             hr(),
+                                                                                                             
+                                                                                                             accordion_panel( title = h5(" \ Lables"),
+                                                                                                                              value = "labels MLConCharANA",
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             hr(),
+                                                                                                             
+                                                                                                             accordion_panel( title = h5(" \ Margins"),
+                                                                                                                              value = "marginsMLConCharANA",
+                                                                                                                              
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             
+                                                                                                             hr(),
+                                                                                                             
+                                                                                                             accordion_panel( title = h5(" \ Nodes"),
+                                                                                                                              value = "NodesMLConCharANA",
+                                                                                                                              
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             
+                                                                                      ),fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold")))
+                                                                                      ))
+                                                                                    
+                                                                                    # Finish Div: MLConCharANAReset
+                                                                                ),
+                                                                                
+                                                                                actionButton("ResetMLConCharANA",width = "100%",label = "Restart initial values")
+                                                                                #Finish TabPanel: MLConCharANA           
+                                                                       ),
+                                                                       
+                                                                       
+                                                  #-------------------------------------------ANS ANALYSIS: MCMC ----------------------------------------------------
+                                                                       tabPanel(id="BIConCharANA",title = "Stochastic mapping",
+                                                                                # Use Div to reset panels
+                                                                                useShinyjs(),
+                                                                                div(id = "BIConCharANAReset",
+                                                                                    fluidRow(
+                                                                                      column(10, 
+                                                                                             fluidRow(
+                                                                                               column(3,sidebarPanel(width = "100%",
+                                                                                                                     p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
+                                                                                                                     hr(),
+                                                                                                                     
+                                                                                                                     
+                                                                                               )),
+                                                                                               column(9,fluidRow(column(8,card(height = "680px",full_screen = TRUE, card_header( strong("Main Plot")),
+                                                                                                                               card_body( plotOutput("plotBIConCharANA", inline = T)),
+                                                                                               )),
+                                                                                               column(4, card(full_screen = TRUE, card_header( strong("Data Structure")),
+                                                                                                              verbatimTextOutput("srtBIConCharANA")),
+                                                                                                      card(full_screen = TRUE,
+                                                                                                           card_header( strong("Messages/Errors")),
+                                                                                                           verbatimTextOutput("infoBIConCharANA"))
+                                                                                                      
+                                                                                               ))))),
+                                                                                      column(2, sidebarPanel(width = "100%",p("Graphic Controls", style = "align:center;text-align:center; font-weight: bold"),hr(),
+                                                                                                             awesomeCheckbox(inputId = "ViewPlotBIConCharANA",label = strong("Display Plot"), 
+                                                                                                                             value = T,status = "info"), hr(),
+                                                                                                             sliderInput(inputId = "HeightBIConCharANA" ,
+                                                                                                                         label = " Height",min =0 ,max = 10000,value = 400),
+                                                                                                             sliderInput(inputId = "WidthBIConCharANA" ,
+                                                                                                                         label = " Width",min =0 ,max = 10000,value = 600 ), 
+                                                                                                             hr(),
+                                                                                                             accordion_panel( title = h5(" \ Tree and edge design"),
+                                                                                                                              value = "SetTreeBIConCharANA",
+                                                                                                                              
+                                                                                                                              
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             hr(),
+                                                                                                             
+                                                                                                             accordion_panel( title = h5(" \ Lables"),
+                                                                                                                              value = "labels BIConCharANA",
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             hr(),
+                                                                                                             
+                                                                                                             accordion_panel( title = h5(" \ Margins"),
+                                                                                                                              value = "marginsBIConCharANA",
+                                                                                                                              
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             
+                                                                                                             hr(),
+                                                                                                             
+                                                                                                             accordion_panel( title = h5(" \ Nodes"),
+                                                                                                                              value = "NodesBIConCharANA",
+                                                                                                                              
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             
+                                                                                      ),fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold")))
+                                                                                      ))
+                                                                                    
+                                                                                    # Finish Div: BIConCharANAReset
+                                                                                ),
+                                                                                
+                                                                                actionButton("ResetBIConCharANA",width = "100%",label = "Restart initial values")
+                                                                                #Finish TabPanel: BIConCharANA           
+                                                                       ),
+                                                                       
+                                                                       
+                                                                       #Finish TabsetPanel: PillsConCharANA
+                                                           )
+                                                           # Finish tabPanel: ConCharANA
                                                   )
-                                                  # Finish tabsetPanel: TabsContChr
+                                                  
+                                                  
+                                                  
+                                                  # Finish tabsetPanel: TabsConChar
                                       )
-                                      # Finish tabPanel: ContChr
+                                      # Finish tabPanel: ConChar
                              ),
                              
                              "----",
                              "Basic Diversification Analyses",
-                             
-                             tabPanel(id = "LTT", title = "Lineages Throught the time",
-                                      tabsetPanel(id="TabsLTT",type="tabs",
-                                                  tabPanel(id="LTTDT",title = "DATA",
-                                                           
+                                                  #-------------------------------------------LTT ----------------------------------------------------
+                             tabPanel(id = "Ltt", title = "Phylogenetic Signal",
+                                      tabsetPanel(id="TabsLtt",type="tabs",
+                                                  #-------------------------------------------LTT DATA ----------------------------------------------------
+                                                  tabPanel(id="LttDT",title = "DATA",
                                                            # Use Div to reset panels
                                                            useShinyjs(),
-                                                           div(id = "ContChrReset",
-                                                               fluidRow(column(10, fluidRow(column(3, fluidRow(sidebarPanel(width = "100%",
-                                                                                                                            p("Setting up", style = "align:center;text-align:center; font-weight: bold"),hr())),
-                                                                                                   br(),
-                                                                                                   fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold"),hr()))),
-                                                                                            column(9,fluidRow(column(8,card(full_screen = TRUE, card_header( strong("Main Plot")))),
-                                                                                                              column(4, card(full_screen = TRUE, card_header( strong("Data Structure"))),
-                                                                                                                     card(full_screen = TRUE, card_header( strong("Messages/Errors")))))))),
-                                                                        column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
+                                                           div(id = "LttDTReset",
+                                                               fluidRow(
+                                                                 column(10, 
+                                                                        fluidRow(
+                                                                          column(3,sidebarPanel(width = "100%",
+                                                                                                p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
+                                                                                                hr(),
+                                                                                                
+                                                                                                
+                                                                          )),
+                                                                          column(9,fluidRow(column(8,card(height = "680px",full_screen = TRUE, card_header( strong("Main Plot")),
+                                                                                                          card_body( plotOutput("plotLttDT", inline = T)),
+                                                                          )),
+                                                                          column(4, card(full_screen = TRUE, card_header( strong("Data Structure")),
+                                                                                         verbatimTextOutput("srtLttDT")),
+                                                                                 card(full_screen = TRUE,
+                                                                                      card_header( strong("Messages/Errors")),
+                                                                                      verbatimTextOutput("infoLttDT"))
+                                                                                 
+                                                                          ))))),
+                                                                 column(2, sidebarPanel(width = "100%",p("Graphic Controls", style = "align:center;text-align:center; font-weight: bold"),hr(),
+                                                                                        awesomeCheckbox(inputId = "ViewPlotLttDT",label = strong("Display Plot"), 
+                                                                                                        value = T,status = "info"), hr(),
+                                                                                        sliderInput(inputId = "HeightLttDT" ,
+                                                                                                    label = " Height",min =0 ,max = 10000,value = 400),
+                                                                                        sliderInput(inputId = "WidthLttDT" ,
+                                                                                                    label = " Width",min =0 ,max = 10000,value = 600 ), 
+                                                                                        hr(),
+                                                                                        accordion_panel( title = h5(" \ Tree and edge design"),
+                                                                                                         value = "SetTreeLttDT",
+                                                                                                         
+                                                                                                         
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        hr(),
+                                                                                        
+                                                                                        accordion_panel( title = h5(" \ Lables"),
+                                                                                                         value = "labels LttDT",
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        hr(),
+                                                                                        
+                                                                                        accordion_panel( title = h5(" \ Margins"),
+                                                                                                         value = "marginsLttDT",
+                                                                                                         
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        
+                                                                                        hr(),
+                                                                                        
+                                                                                        accordion_panel( title = h5(" \ Nodes"),
+                                                                                                         value = "NodesLttDT",
+                                                                                                         
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        
+                                                                 ),fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold")))
+                                                                 ))
                                                                
-                                                               # Finish Div: LTTDTReset
+                                                               # Finish Div: LttDTReset
                                                            ),
-                                                          
-                                                           # Finish tabPanel: LTTDT
+                                                           
+                                                           actionButton("ResetLttDT",width = "100%",label = "Restart initial values")
+                                                           # Finish tabPanel: LttDT
                                                   ),
-                                                  
-                                                  tabPanel(id="LTTANA",title = "ANALYSIS",
-                                                           
-                                                           # Use Div to reset panels
-                                                           useShinyjs(),
-                                                           div(id = "LTTANAReset",
-                                                               fluidRow(column(10, fluidRow(column(3, fluidRow(sidebarPanel(width = "100%",
-                                                                                                                            p("Setting up", style = "align:center;text-align:center; font-weight: bold"),hr())),
-                                                                                                   br(),
-                                                                                                   fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold"),hr()))),
-                                                                                            column(9,fluidRow(column(7,card(full_screen = TRUE, card_header( strong("Main Plot")))),
-                                                                                                              column(5, card(full_screen = TRUE, card_header( strong("Data Structure"))),
-                                                                                                                     card(full_screen = TRUE, card_header( strong("Messages/Errors")))))))),
-                                                                        column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
-                                                               
-                                                               # Finish Div:LTTReset
-                                                           ),
-                                                         
-                                                           # Finish tabPanel: LTTANA
-                                                  )
-                                                  # Finish tabsetPanel: TabsLTT
-                                      )
-                                      
-                             ),
-                             
-                             tabPanel(id = "DivMod", "Diversification Models",
-                                      tabsetPanel(id="TabsDivMod",type="tabs",
-                                                  tabPanel(id="DivModDT",title = "DATA",
-                                                           
-                                                           # Use Div to reset panels
-                                                           useShinyjs(),
-                                                           div(id = "DivModReset",
-                                                               fluidRow(column(10, fluidRow(column(3, fluidRow(sidebarPanel(width = "100%",
-                                                                                                                            p("Setting up", style = "align:center;text-align:center; font-weight: bold"),hr())),
-                                                                                                   br(),
-                                                                                                   fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold"),hr()))),
-                                                                                            column(9,fluidRow(column(8,card(full_screen = TRUE, card_header( strong("Main Plot")))),
-                                                                                                              column(4, card(full_screen = TRUE, card_header( strong("Data Structure"))),
-                                                                                                                     card(full_screen = TRUE, card_header( strong("Messages/Errors")))))))),
-                                                                        column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
-                                                               
-                                                               # Finish Div: DivModReset
-                                                           ),
+                                                  #-------------------------------------------LTT ANALYSIS ----------------------------------------------------
+                                                 
                                                           
+                                                                       tabPanel(id="LttANA",title = "ANALYSIS",
+                                                                                # Use Div to reset panels
+                                                                                useShinyjs(),
+                                                                                div(id = "LttANAReset",
+                                                                                    fluidRow(
+                                                                                      column(10, 
+                                                                                             fluidRow(
+                                                                                               column(3,sidebarPanel(width = "100%",
+                                                                                                                     p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
+                                                                                                                     hr(),
+                                                                                                                     
+                                                                                                                     
+                                                                                               )),
+                                                                                               column(9,fluidRow(column(8,card(height = "680px",full_screen = TRUE, card_header( strong("Main Plot")),
+                                                                                                                               card_body( plotOutput("plotLttANA", inline = T)),
+                                                                                               )),
+                                                                                               column(4, card(full_screen = TRUE, card_header( strong("Data Structure")),
+                                                                                                              verbatimTextOutput("srtLttANA")),
+                                                                                                      card(full_screen = TRUE,
+                                                                                                           card_header( strong("Messages/Errors")),
+                                                                                                           verbatimTextOutput("infoLttANA"))
+                                                                                                      
+                                                                                               ))))),
+                                                                                      column(2, sidebarPanel(width = "100%",p("Graphic Controls", style = "align:center;text-align:center; font-weight: bold"),hr(),
+                                                                                                             awesomeCheckbox(inputId = "ViewPlotLttANA",label = strong("Display Plot"), 
+                                                                                                                             value = T,status = "info"), hr(),
+                                                                                                             sliderInput(inputId = "HeightLttANA" ,
+                                                                                                                         label = " Height",min =0 ,max = 10000,value = 400),
+                                                                                                             sliderInput(inputId = "WidthLttANA" ,
+                                                                                                                         label = " Width",min =0 ,max = 10000,value = 600 ), 
+                                                                                                             hr(),
+                                                                                                             accordion_panel( title = h5(" \ Tree and edge design"),
+                                                                                                                              value = "SetTreeLttANA",
+                                                                                                                              
+                                                                                                                              
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             hr(),
+                                                                                                             
+                                                                                                             accordion_panel( title = h5(" \ Lables"),
+                                                                                                                              value = "labels LttANA",
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             hr(),
+                                                                                                             
+                                                                                                             accordion_panel( title = h5(" \ Margins"),
+                                                                                                                              value = "marginsLttANA",
+                                                                                                                              
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             
+                                                                                                             hr(),
+                                                                                                             
+                                                                                                             accordion_panel( title = h5(" \ Nodes"),
+                                                                                                                              value = "NodesLttANA",
+                                                                                                                              
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             
+                                                                                      ),fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold")))
+                                                                                      ))
+                                                                                    
+                                                                                    # Finish Div: LttANAReset
+                                                                                ),
+                                                                                
+                                                                                actionButton("ResetLttANA",width = "100%",label = "Restart initial values")
+                                                                           
+                                                           # Finish tabPanel: LttANA
+                                                  )
+                                                  
+                                                  
+                                                  
+                                                  # Finish tabsetPanel: TabsLtt
+                                      )
+                                      # Finish tabPanel: Ltt
+                             ),
+                                                  #-------------------------------------------Diversification Models-----------------------
+                             tabPanel(id = "DivMod", title = "Phylogenetic Signal",
+                                      tabsetPanel(id="TabsDivMod",type="tabs",
+                                                  #-------------------------------------------DivMod DATA ----------------------------------------------------
+                                                  tabPanel(id="DivModDT",title = "DATA",
+                                                           # Use Div to reset panels
+                                                           useShinyjs(),
+                                                           div(id = "DivModDTReset",
+                                                               fluidRow(
+                                                                 column(10, 
+                                                                        fluidRow(
+                                                                          column(3,sidebarPanel(width = "100%",
+                                                                                                p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
+                                                                                                hr(),
+                                                                                                
+                                                                                                
+                                                                          )),
+                                                                          column(9,fluidRow(column(8,card(height = "680px",full_screen = TRUE, card_header( strong("Main Plot")),
+                                                                                                          card_body( plotOutput("plotDivModDT", inline = T)),
+                                                                          )),
+                                                                          column(4, card(full_screen = TRUE, card_header( strong("Data Structure")),
+                                                                                         verbatimTextOutput("srtDivModDT")),
+                                                                                 card(full_screen = TRUE,
+                                                                                      card_header( strong("Messages/Errors")),
+                                                                                      verbatimTextOutput("infoDivModDT"))
+                                                                                 
+                                                                          ))))),
+                                                                 column(2, sidebarPanel(width = "100%",p("Graphic Controls", style = "align:center;text-align:center; font-weight: bold"),hr(),
+                                                                                        awesomeCheckbox(inputId = "ViewPlotDivModDT",label = strong("Display Plot"), 
+                                                                                                        value = T,status = "info"), hr(),
+                                                                                        sliderInput(inputId = "HeightDivModDT" ,
+                                                                                                    label = " Height",min =0 ,max = 10000,value = 400),
+                                                                                        sliderInput(inputId = "WidthDivModDT" ,
+                                                                                                    label = " Width",min =0 ,max = 10000,value = 600 ), 
+                                                                                        hr(),
+                                                                                        accordion_panel( title = h5(" \ Tree and edge design"),
+                                                                                                         value = "SetTreeDivModDT",
+                                                                                                         
+                                                                                                         
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        hr(),
+                                                                                        
+                                                                                        accordion_panel( title = h5(" \ Lables"),
+                                                                                                         value = "labels DivModDT",
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        hr(),
+                                                                                        
+                                                                                        accordion_panel( title = h5(" \ Margins"),
+                                                                                                         value = "marginsDivModDT",
+                                                                                                         
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        
+                                                                                        hr(),
+                                                                                        
+                                                                                        accordion_panel( title = h5(" \ Nodes"),
+                                                                                                         value = "NodesDivModDT",
+                                                                                                         
+                                                                                                         open = FALSE,icon = icon("greater-than")),
+                                                                                        
+                                                                                        
+                                                                 ),fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold")))
+                                                                 ))
+                                                               
+                                                               # Finish Div: DivModDTReset
+                                                           ),
+                                                           
+                                                           actionButton("ResetDivModDT",width = "100%",label = "Restart initial values")
                                                            # Finish tabPanel: DivModDT
                                                   ),
-                                                  
+                                                  #-------------------------------------------DivMod ANALYSIS ----------------------------------------------------
                                                   tabPanel(id="DivModANA",title = "ANALYSIS",
-                                                           
-                                                           # Use Div to reset panels
-                                                           useShinyjs(),
-                                                           div(id = "DivModReset",
-                                                               fluidRow(column(10, fluidRow(column(3, fluidRow(sidebarPanel(width = "100%",
-                                                                                                                            p("Setting up", style = "align:center;text-align:center; font-weight: bold"),hr())),
-                                                                                                   br(),
-                                                                                                   fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold"),hr()))),
-                                                                                            column(9,fluidRow(column(7,card(full_screen = TRUE, card_header( strong("Main Plot")))),
-                                                                                                              column(5, card(full_screen = TRUE, card_header( strong("Data Structure"))),
-                                                                                                                     card(full_screen = TRUE, card_header( strong("Messages/Errors")))))))),
-                                                                        column(2, sidebarPanel(width = "100%",strong("Graphic controls"),hr())))
-                                                               
-                                                               # Finish Div:DivModReset
-                                                           ),
-                                                           
+                                                           tabsetPanel(id="PillsDiverModANA",type="pills",
+                                                                       
+                                                  #-------------------------------------------DivMod ANALYSIS: Maxumum Likelihood ----------------------------------------------------
+                                                                       tabPanel(id="MLDivModANA",title = "Maxumum Likelihood",
+                                                                                # Use Div to reset panels
+                                                                                useShinyjs(),
+                                                                                div(id = "MLDivModANAReset",
+                                                                                    fluidRow(
+                                                                                      column(10, 
+                                                                                             fluidRow(
+                                                                                               column(3,sidebarPanel(width = "100%",
+                                                                                                                     p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
+                                                                                                                     hr(),
+                                                                                                                     
+                                                                                                                     
+                                                                                               )),
+                                                                                               column(9,fluidRow(column(8,card(height = "680px",full_screen = TRUE, card_header( strong("Main Plot")),
+                                                                                                                               card_body( plotOutput("plotMLDivModANA", inline = T)),
+                                                                                               )),
+                                                                                               column(4, card(full_screen = TRUE, card_header( strong("Data Structure")),
+                                                                                                              verbatimTextOutput("srtMLDivModANA")),
+                                                                                                      card(full_screen = TRUE,
+                                                                                                           card_header( strong("Messages/Errors")),
+                                                                                                           verbatimTextOutput("infoMLDivModANA"))
+                                                                                                      
+                                                                                               ))))),
+                                                                                      column(2, sidebarPanel(width = "100%",p("Graphic Controls", style = "align:center;text-align:center; font-weight: bold"),hr(),
+                                                                                                             awesomeCheckbox(inputId = "ViewPlotMLDivModANA",label = strong("Display Plot"), 
+                                                                                                                             value = T,status = "info"), hr(),
+                                                                                                             sliderInput(inputId = "HeightMLDivModANA" ,
+                                                                                                                         label = " Height",min =0 ,max = 10000,value = 400),
+                                                                                                             sliderInput(inputId = "WidthMLDivModANA" ,
+                                                                                                                         label = " Width",min =0 ,max = 10000,value = 600 ), 
+                                                                                                             hr(),
+                                                                                                             accordion_panel( title = h5(" \ Tree and edge design"),
+                                                                                                                              value = "SetTreeMLDivModANA",
+                                                                                                                              
+                                                                                                                              
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             hr(),
+                                                                                                             
+                                                                                                             accordion_panel( title = h5(" \ Lables"),
+                                                                                                                              value = "labels MLDivModANA",
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             hr(),
+                                                                                                             
+                                                                                                             accordion_panel( title = h5(" \ Margins"),
+                                                                                                                              value = "marginsMLDivModANA",
+                                                                                                                              
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             
+                                                                                                             hr(),
+                                                                                                             
+                                                                                                             accordion_panel( title = h5(" \ Nodes"),
+                                                                                                                              value = "NodesMLDivModANA",
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             
+                                                                                      ),fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold")))
+                                                                                      ))
+                                                                                    
+                                                                                    # Finish Div: MLDivModANAReset
+                                                                                ),
+                                                                                
+                                                                                actionButton("ResetMLDivModANA",width = "100%",label = "Restart initial values")
+                                                                                #Finish TabPanel: MLDivModANA           
+                                                                       ),
+                                                                       
+                                                                       
+                                                  #-------------------------------------------DivMod ANALYSIS: MCMC ----------------------------------------------------
+                                                                       tabPanel(id="BIDivModANA",title = "Stochastic mapping",
+                                                                                # Use Div to reset panels
+                                                                                useShinyjs(),
+                                                                                div(id = "BIDivModANAReset",
+                                                                                    fluidRow(
+                                                                                      column(10, 
+                                                                                             fluidRow(
+                                                                                               column(3,sidebarPanel(width = "100%",
+                                                                                                                     p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
+                                                                                                                     hr(),
+                                                                                                                     
+                                                                                                                     
+                                                                                               )),
+                                                                                               column(9,fluidRow(column(8,card(height = "680px",full_screen = TRUE, card_header( strong("Main Plot")),
+                                                                                                                               card_body( plotOutput("plotBIDivModANA", inline = T)),
+                                                                                               )),
+                                                                                               column(4, card(full_screen = TRUE, card_header( strong("Data Structure")),
+                                                                                                              verbatimTextOutput("srtBIDivModANA")),
+                                                                                                      card(full_screen = TRUE,
+                                                                                                           card_header( strong("Messages/Errors")),
+                                                                                                           verbatimTextOutput("infoBIDivModANA"))
+                                                                                                      
+                                                                                               ))))),
+                                                                                      column(2, sidebarPanel(width = "100%",p("Graphic Controls", style = "align:center;text-align:center; font-weight: bold"),hr(),
+                                                                                                             awesomeCheckbox(inputId = "ViewPlotBIDivModANA",label = strong("Display Plot"), 
+                                                                                                                             value = T,status = "info"), hr(),
+                                                                                                             sliderInput(inputId = "HeightBIDivModANA" ,
+                                                                                                                         label = " Height",min =0 ,max = 10000,value = 400),
+                                                                                                             sliderInput(inputId = "WidthBIDivModANA" ,
+                                                                                                                         label = " Width",min =0 ,max = 10000,value = 600 ), 
+                                                                                                             hr(),
+                                                                                                             accordion_panel( title = h5(" \ Tree and edge design"),
+                                                                                                                              value = "SetTreeBIDivModANA",
+                                                                                                                              
+                                                                                                                              
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             hr(),
+                                                                                                             
+                                                                                                             accordion_panel( title = h5(" \ Lables"),
+                                                                                                                              value = "labels BIDivModANA",
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             hr(),
+                                                                                                             
+                                                                                                             accordion_panel( title = h5(" \ Margins"),
+                                                                                                                              value = "marginsBIDivModANA",
+                                                                                                                              
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             
+                                                                                                             hr(),
+                                                                                                             
+                                                                                                             accordion_panel( title = h5(" \ Nodes"),
+                                                                                                                              value = "NodesBIDivModANA",
+                                                                                                                              
+                                                                                                                              open = FALSE,icon = icon("greater-than")),
+                                                                                                             
+                                                                                                             
+                                                                                      ),fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold")))
+                                                                                      ))
+                                                                                    
+                                                                                    # Finish Div: BIDivModANAReset
+                                                                                ),
+                                                                                
+                                                                                actionButton("ResetBIDivModANA",width = "100%",label = "Restart initial values")
+                                                                                #Finish TabPanel: BIDivModANA           
+                                                                       ),
+                                                                       
+                                                                       
+                                                                       #Finish TabsetPanel: PillsDivModANA
+                                                           )
                                                            # Finish tabPanel: DivModANA
                                                   )
+                                                  
+                                                  
+                                                  
                                                   # Finish tabsetPanel: TabsDivMod
                                       )
-                                      
-                             )
-                             # Finish  navbarMenu
+                                      # Finish tabPanel: DivMod
+                             ),
+                             # Finish navbarmenu: GnavbarPage
                  ),
-                 
-                 tabPanel(id="Rcode","Code",verbatimTextOutput("CodePanel"))
-                 # Finish navbarPage: GnavbarPage
-)
+                                                  #-------------------------- R code panel ------------------------------
+                 tabPanel(id="Rcode",title= "R code",
+                          fluidRow( 
+                            ))
+
+# Finish  navbarPage ALL APP
+))
+
+
 
 
