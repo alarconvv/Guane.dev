@@ -503,6 +503,17 @@ shinyUI(navbarPage(title = div( "", img(src = "Picture1.png",
                                                                           column(3,sidebarPanel(width = "100%",
                                                                                                 p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
                                                                                                 hr(),
+                                                                                                actionButton(inputId = "loadMLDisCharANA",label = "Load/Refresh data" ,width = "100%"),hr(),
+                                                                                                
+                                                                                                selectInput("select", label = "Estimation", 
+                                                                                                            choices = list("Marginal" = "marginal", "Joint" = "joint"), 
+                                                                                                            selected = "marginal"),
+                                                                                                selectInput("ModMLDisCharANA", "Set models",choices = NULL,multiple = TRUE),
+                                                                                                uiOutput("addModMLDisCharANA"),
+                                                                                                
+                                                                                                
+                                                                                                #----------------- nextime add matrix
+                                                                        
                                                                                                 
                                                                                                 
                                                                           )),
