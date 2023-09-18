@@ -18,6 +18,7 @@ library(shinyAce)
 library(ape)
 library(phytools)
 library(geiger)
+library(rhandsontable)
 
 
 
@@ -301,102 +302,102 @@ shinyUI(navbarPage(title = div( "", img(src = "Picture1.png",
                                                                           column(3,sidebarPanel(width = "100%",
                                                                                                 p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
                                                                                                 hr(),
-                                                                                                fileInput(inputId = "treeDisCharDT",
+                                                                                                fileInput(inputId = "treeDisDT",
                                                                                                           label = strong("Load tree"),
                                                                                                           width = "100%",
                                                                                                           accept = c(".tree",".tre",".nexus",".phy",".nex")),
                                                                                                 
                                                                                                 fluidRow(column(6,aling="center",
-                                                                                                                materialSwitch(inputId = "EgTreeDisCharDT",label = "Use example",
+                                                                                                                materialSwitch(inputId = "EgTreeDisDT",label = "Use example",
                                                                                                                                value = FALSE,status = "info",right = TRUE)),
-                                                                                                         column(6,align= "right",actionButton(inputId = "loadTreeDisCharDT",
+                                                                                                         column(6,align= "right",actionButton(inputId = "loadTreeDisDT",
                                                                                                                                               label = NULL,icon =icon(name = "upload"), 
                                                                                                                                               width = "25%"))),
                                                                                                 hr(),
-                                                                                                fileInput(inputId = "csvDisCharDT",
+                                                                                                fileInput(inputId = "csvDisDT",
                                                                                                           label = strong('Load Character(s)'),
                                                                                                           width = "100%",
                                                                                                           accept = c(".csv",".txt",".text")),
                                                                                                 fluidRow(column(6,aling="center",
-                                                                                                                materialSwitch(inputId = "EgCSVDisCharDT",label = "Use example",
+                                                                                                                materialSwitch(inputId = "EgCSVDisDT",label = "Use example",
                                                                                                                                value = FALSE,status = "info",right = TRUE)),
-                                                                                                         column(6,align= "right",actionButton(inputId = "loadCSVDisCharDT",
+                                                                                                         column(6,align= "right",actionButton(inputId = "loadCSVDisDT",
                                                                                                                                               label = NULL,icon =icon(name = "upload"), 
                                                                                                                                               width = "25%"))),
                                                                                                 hr(),
-                                                                                                awesomeCheckbox(inputId = "chckNamesDisCharDT",label = strong("Check tree & data names"), 
+                                                                                                awesomeCheckbox(inputId = "chckNamesDisDT",label = strong("Check tree & data names"), 
                                                                                                   value = F,status = "info"),
-                                                                                                uiOutput(outputId = "RslvNamesDisCharDT"),
+                                                                                                uiOutput(outputId = "RslvNamesDisDT"),
                                                                                                 hr(),
-                                                                                                selectInput(inputId = "chooseVarDisCharDT",label = strong("Select  your discrete character"), choices = "Select"),
-                                                                                                selectInput(inputId = "chooseTupeDisCharDT",label = strong("Select characther type"), choices = c("Select","monomorphic", "polymorphic"),selected = NULL,multiple = F),
+                                                                                                selectInput(inputId = "chooseVarDisDT",label = strong("Select  your discrete character"), choices = "Select"),
+                                                                                                selectInput(inputId = "chooseTupeDisDT",label = strong("Select characther type"), choices = c("Select","monomorphic", "polymorphic"),selected = NULL,multiple = F),
                                                                                                 
                                                                                                 
                                                                                                 
                                                                ),),
                                                                column(9,fluidRow(column(8,card(height = "680px",full_screen = TRUE, card_header( strong("Main Plot")),
-                                                                                               card_body( plotOutput("plotDisCharDT", inline = T)),
+                                                                                               card_body( plotOutput("plotDisDT", inline = T)),
                                                                                               )),
                                                                                  column(4, card(full_screen = TRUE, card_header( strong("Data Structure")),
-                                                                                                verbatimTextOutput("srtDisCharDT")),
+                                                                                                verbatimTextOutput("srtDisDT")),
                                                                                         card(full_screen = TRUE,
                                                                                              card_header( strong("Messages/Errors")),
-                                                                                                            verbatimTextOutput("infoDisCharDT")
+                                                                                                            verbatimTextOutput("infoDisDT")
                                                                                         )
                                                                                         
                                                                                  ))))),
                                                                column(2, sidebarPanel(width = "100%",p("Graphic Controls", style = "align:center;text-align:center; font-weight: bold"),hr(),
-                                                                                      awesomeCheckbox(inputId = "ViewPlotDisCharDT",label = strong("Display Plot"), 
+                                                                                      awesomeCheckbox(inputId = "ViewPlotDisDT",label = strong("Display Plot"), 
                                                                                                       value = T,status = "info"), hr(),
-                                                                                      sliderInput(inputId = "HeightDisCharDT" ,
+                                                                                      sliderInput(inputId = "HeightDisDT" ,
                                                                                                   label = " Height",min =0 ,max = 10000,value = 400),
-                                                                                      sliderInput(inputId = "WidthDisCharDT" ,
+                                                                                      sliderInput(inputId = "WidthDisDT" ,
                                                                                                   label = " Width",min =0 ,max = 10000,value = 600 ), 
                                                                                       hr(),
                                                                                       accordion_panel( title = h5(" \ Tree and edge design"),
-                                                                                                       value = "SetTreeDisCharDT",
+                                                                                                       value = "SetTreeDisDT",
                                                                                                        pickerInput(selected = "regular",
-                                                                                                                   inputId = "ladderizeDisCharDT",
+                                                                                                                   inputId = "ladderizeDisDT",
                                                                                                                    label = strong('Type'),
                                                                                                                    choices = c("regular", 
                                                                                                                                "ascending", "descending")
                                                                                                        ),
                                                                                                        
                                                                                                        pickerInput(selected = "phylogram",
-                                                                                                                   inputId = "typeDisCharDT",
+                                                                                                                   inputId = "typeDisDT",
                                                                                                                    label = strong('Sort Tree'),
                                                                                                                    choices = c("phylogram" , 
                                                                                                                                "cladogram", "fan","unrooted","radial","tidy"), 
                                                                                                        ),
                                                                                                        
                                                                                                        pickerInput(selected = "rightwards",
-                                                                                                                   inputId = "directionDisCharDT",
+                                                                                                                   inputId = "directionDisDT",
                                                                                                                    label = strong('Direction'),
                                                                                                                    choices = c("rightwards" , 
                                                                                                                                "leftwards", "upwards",
                                                                                                                                "downwards"), 
                                                                                                        ),
                                                                                                    
-                                                                                                       conditionalPanel(condition= "input.typeDisCharDT == 'fan' || input.typeDisCharDT == 'radial' ",
-                                                                                                                        numericInput(inputId = "rotateTreeDisCharDT",
+                                                                                                       conditionalPanel(condition= "input.typeDisDT == 'fan' || input.typeDisDT == 'radial' ",
+                                                                                                                        numericInput(inputId = "rotateTreeDisDT",
                                                                                                                                      label = "Rotate tree",value = 0 ,min =-360,
                                                                                                                                      max =360 ,step =0.1 ,width = "40%"),
-                                                                                                                        numericInput(inputId = "openAngleDisCharDT",
+                                                                                                                        numericInput(inputId = "openAngleDisDT",
                                                                                                                                      label = "Open angle",
                                                                                                                                      value = 0.1 ,min =0.1,
                                                                                                                                      max =360 ,step =0.1 ,width = "40%"),
                                                                                                                         ),
                                                                                       
-                                                                                      awesomeCheckbox(inputId = "edgeLenghtDisCharDT",
+                                                                                      awesomeCheckbox(inputId = "edgeLenghtDisDT",
                                                                                                       label = strong("Use edge lengths"), 
                                                                                                       value = T,status = "info"),
                                                                                       
-                                                                                      numericInput(inputId = "edgeWidthDisCharDT",
+                                                                                      numericInput(inputId = "edgeWidthDisDT",
                                                                                                    label = "set edge width",value = 1 ,
                                                                                                    min =0.1 ,max =10 ,step =0.01 ,width = "40%"),
                                                                                       
                                                                                       selectInput(selected = "plain",
-                                                                                                  inputId = "edgetlyDisCharDT",
+                                                                                                  inputId = "edgetlyDisDT",
                                                                                                   label = strong('Line Type'),
                                                                                                   choices = c( "plain" = "1" ,  "dashed" = "2", 
                                                                                                               "dotted" = "3",  "dotdash" = "4", 
@@ -408,37 +409,37 @@ shinyUI(navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                       hr(),
 
                                                                                       accordion_panel( title = h5(" \ Lables"),
-                                                                                                       value = "lablesDisCharDT",
-                                                                                                       awesomeCheckbox(inputId = "tipLabelsDisCharDT",label = strong("Show tip lables"), 
+                                                                                                       value = "lablesDisDT",
+                                                                                                       awesomeCheckbox(inputId = "tipLabelsDisDT",label = strong("Show tip lables"), 
                                                                                                                        value = T,status = "info"),
-                                                                                                       awesomeCheckbox(inputId = "aligntiplabelDisCharDT",
+                                                                                                       awesomeCheckbox(inputId = "aligntiplabelDisDT",
                                                                                                                        label = strong("Align tip label"), 
                                                                                                                        value = F,status = "info"),
-                                                                                                       awesomeCheckbox(inputId = "underscoreDisCharDT",
+                                                                                                       awesomeCheckbox(inputId = "underscoreDisDT",
                                                                                                                        label = strong("Underscore"), 
                                                                                                                        value = F,status = "info"),
                                                                                                        selectInput(selected = "plain text",
-                                                                                                                   inputId = "fontDisCharDT",
+                                                                                                                   inputId = "fontDisDT",
                                                                                                                    label = strong('Font'),
                                                                                                                    choices = c( "plain text" = "1" ,  "bold" = "2", 
                                                                                                                                 "italic" = "3",  "bold-italic" = "4")),
-                                                                                                       numericInput(inputId = "cexDisCharDT",
+                                                                                                       numericInput(inputId = "cexDisDT",
                                                                                                                     label = "size labels",value = 1 ,
                                                                                                                     min =0.1 ,max =10 ,step =0.001 ,width = "40%"),
                                                                                                        selectInput(selected = NULL,
-                                                                                                                   inputId = "adjDisCharDT",
+                                                                                                                   inputId = "adjDisDT",
                                                                                                                    label = strong('Justification'),
                                                                                                                    choices = c( "left-justification" = "0" ,  "centering" = "0.5", 
                                                                                                                                 "right-justification" = "1", NULL)),
-                                                                                                      numericInput(inputId = "srtDisCharDT",
+                                                                                                      numericInput(inputId = "srtDisDT",
                                                                                                                    label = "Label rotation",
                                                                                                                    value = 0.1 ,min =0.1,
                                                                                                                    max =360 ,step =0.1 ,width = "40%"),
-                                                                                                      numericInput(inputId = "labeloffsetDisCharDT",
+                                                                                                      numericInput(inputId = "labeloffsetDisDT",
                                                                                                                    label = "Label offset",value = 0.01 ,
                                                                                                                    min =0.1 ,max =10 ,step =0.001 ,width = "40%"),
                                                                                                       selectInput(selected = "horizontal",
-                                                                                                                  inputId = "lab4utDisCharDT",
+                                                                                                                  inputId = "lab4utDisDT",
                                                                                                                   label = strong('Labels for unroot'),
                                                                                                                   choices = c( "horizontal" ,  "axial")),
                                                                                                       open = FALSE,icon = icon("greater-than")),
@@ -446,15 +447,15 @@ shinyUI(navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                       hr(),
                                                                                       
                                                                                       accordion_panel( title = h5(" \ Margins"),
-                                                                                                       value = "marginsDisCharDT",
-                                                                                                       awesomeCheckbox(inputId = "nomarginDisCharDT",
+                                                                                                       value = "marginsDisDT",
+                                                                                                       awesomeCheckbox(inputId = "nomarginDisDT",
                                                                                                                        label = strong("No margin"), 
                                                                                                                        value = T,status = "info"),
                                                                                                        
-                                                                                                       # numericInput(inputId = "xlimDisCharDT",
+                                                                                                       # numericInput(inputId = "xlimDisDT",
                                                                                                        #              label = "x lim",value = 0.1,
                                                                                                        #              min =0.1 ,max =10 ,step =0.001 ,width = "40%"),
-                                                                                                       # numericInput(inputId = "ylimDisCharDT",
+                                                                                                       # numericInput(inputId = "ylimDisDT",
                                                                                                        #              label = "y lim",value = 0.1,
                                                                                                        #              min =0.1 ,max =10 ,step =0.001 ,width = "40%"),
                                                                                                        open = FALSE,icon = icon("greater-than")),
@@ -463,17 +464,17 @@ shinyUI(navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                       hr(),
                                                                                       
                                                                                       accordion_panel( title = h5(" \ Nodes"),
-                                                                                                       value = "NodesDisCharDT",
-                                                                                                       awesomeCheckbox(inputId = "nodelabelDisCharDT",
+                                                                                                       value = "NodesDisDT",
+                                                                                                       awesomeCheckbox(inputId = "nodelabelDisDT",
                                                                                                                        label = strong("Show node label"), 
                                                                                                                        value = F,status = "info"),
                                                                                                        
-                                                                                                       numericInput(inputId = "nodeWidthDisCharDT",
+                                                                                                       numericInput(inputId = "nodeWidthDisDT",
                                                                                                                     label = "Node width",value = 1 ,
                                                                                                                     min =0.1 ,max =10 ,step =0.01 ,width = "40%"),
                                                                                                        
                                                                                                        selectInput(selected = "plain",
-                                                                                                                   inputId = "nodeltyDisCharDT",
+                                                                                                                   inputId = "nodeltyDisDT",
                                                                                                                    label = strong('Line Type'),
                                                                                                                    choices = c( "plain" = "1" ,  "dashed" = "2", 
                                                                                                                                 "dotted" = "3",  "dotdash" = "4", 
@@ -492,51 +493,71 @@ shinyUI(navbarPage(title = div( "", img(src = "Picture1.png",
                                                   ),
                                                   
                                                   #-------------------------------------------ANS Discrete Characters ANALYSIS ----------------------------------------------------
-                                                  tabPanel(id="DisCharANA",title = "ANALYSIS",
+                                                  tabPanel(id="DisCharAN",title = "ANALYSIS",
                                                            
                                                            # Use Div to reset panels
                                                            useShinyjs(),
-                                                           div(id = "DisCharANAReset",
+                                                           div(id = "DisMLReset",
                                                                fluidRow(
                                                                  column(10, 
                                                                         fluidRow(
                                                                           column(3,sidebarPanel(width = "100%",
                                                                                                 p("Setting up", style = "align:center;text-align:center; font-weight: bold"),
                                                                                                 hr(),
-                                                                                                actionButton(inputId = "loadMLDisCharANA",label = "Load/Refresh data" ,width = "100%"),hr(),
+                                                                                                actionButton(inputId = "loadDisML",label = "Load/Refresh data" ,width = "100%"),hr(),
                                                                                                 
                                                                                                 selectInput("select", label = "Estimation", 
                                                                                                             choices = list("Marginal" = "marginal", "Joint" = "joint"), 
                                                                                                             selected = "marginal"),
-                                                                                                selectInput("ModMLDisCharANA", "Set models",choices = NULL,multiple = TRUE),
-                                                                                                uiOutput("addModMLDisCharANA"),
+                                                                                                selectInput("ModDisML", "Set models",choices = NULL,multiple = TRUE),
+                                                                                                uiOutput("addModel3States"),
+                                                                                                conditionalPanel("input.addModDisML > 0",
+                                                                                                                 br(), rHandsontableOutput("w1"), br(),
+                                                                                                                 actionButton('SubmAddModel','Submit'))
+                                                                                                
+                                                                                                #---------------- add run analysis
+                                                                                               
+                                                                                                                
+                                                                                                              
                                                                                                 
                                                                                                 
-                                                                                                #----------------- nextime add matrix
+                                                                                           
                                                                         
+                                                                                                
+                                                                                  
+                                                                                                
+                                                                                                
+                                                                                                
+                                                                                                
+                                                                                                
+                                                                                                
+                                                                                                
+                                                                                                
+                                                                                                              
+                                                                                                
                                                                                                 
                                                                                                 
                                                                           )),
                                                                           column(9,fluidRow(column(8,card(height = "680px",full_screen = TRUE, card_header( strong("Main Plot")),
-                                                                                                          card_body( plotOutput("plotDisCharANA", inline = T)),
+                                                                                                          card_body( plotOutput("plotDisML", inline = T)),
                                                                           )),
                                                                           column(4, card(full_screen = TRUE, card_header( strong("Data Structure")),
-                                                                                         verbatimTextOutput("srtDisCharANA")),
+                                                                                         verbatimTextOutput("srtDisML")),
                                                                                  card(full_screen = TRUE,
                                                                                       card_header( strong("Messages/Errors")),
-                                                                                      verbatimTextOutput("infoDisCharANA"))
+                                                                                      verbatimTextOutput("infoDisML"))
                                                                                  
                                                                           ))))),
                                                                  column(2, sidebarPanel(width = "100%",p("Graphic Controls", style = "align:center;text-align:center; font-weight: bold"),hr(),
-                                                                                        awesomeCheckbox(inputId = "ViewPlotDisCharANA",label = strong("Display Plot"), 
+                                                                                        awesomeCheckbox(inputId = "ViewPlotDisML",label = strong("Display Plot"), 
                                                                                                         value = T,status = "info"), hr(),
-                                                                                        sliderInput(inputId = "HeightDisCharANA" ,
+                                                                                        sliderInput(inputId = "HeightDisML" ,
                                                                                                     label = " Height",min =0 ,max = 10000,value = 400),
-                                                                                        sliderInput(inputId = "WidthDisCharANA" ,
+                                                                                        sliderInput(inputId = "WidthDisML" ,
                                                                                                     label = " Width",min =0 ,max = 10000,value = 600 ), 
                                                                                         hr(),
                                                                                         accordion_panel( title = h5(" \ Tree and edge design"),
-                                                                                                         value = "SetTreeDisCharANA",
+                                                                                                         value = "SetTreeDisML",
                                                                                                         
                                                                                                          
                                                                                                          open = FALSE,icon = icon("greater-than")),
@@ -544,13 +565,13 @@ shinyUI(navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                         hr(),
                                                                                         
                                                                                         accordion_panel( title = h5(" \ Lables"),
-                                                                                                         value = "labels DisCharANA",
+                                                                                                         value = "labelsDisML",
                                                                                                          open = FALSE,icon = icon("greater-than")),
                                                                                         
                                                                                         hr(),
                                                                                         
                                                                                         accordion_panel( title = h5(" \ Margins"),
-                                                                                                         value = "marginsDisCharANA",
+                                                                                                         value = "marginsDisML",
                                                                                                         
                                                                                                          open = FALSE,icon = icon("greater-than")),
                                                                                         
@@ -558,7 +579,7 @@ shinyUI(navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                         hr(),
                                                                                         
                                                                                         accordion_panel( title = h5(" \ Nodes"),
-                                                                                                         value = "NodesDisCharANA",
+                                                                                                         value = "NodesDisML",
                                                                                                          
                                                                                                          open = FALSE,icon = icon("greater-than")),
                                                                                         
@@ -566,10 +587,10 @@ shinyUI(navbarPage(title = div( "", img(src = "Picture1.png",
                                                                  ),fluidRow(sidebarPanel(width = "100%",p("Download", style = "align:center;text-align:center; font-weight: bold")))
                                                                  ))
                                                                
-                                                               # Finish Div: DisCharANAReset
+                                                               # Finish Div: DisML
                                                            ),
                                                            
-                                                           actionButton("ResetDisCharANA",width = "100%",label = "Restart initial values")
+                                                           actionButton("DisMLReset",width = "100%",label = "Restart initial values")
                                                            # Finish tabPanel: DisCharANA
                                                   ),
                                                   

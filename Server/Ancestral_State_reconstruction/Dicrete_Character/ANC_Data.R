@@ -6,111 +6,111 @@
 
 #------------------ Reactive Variables --------------------
 
-VarDisCharDT <- reactiveValues()
-VarDisCharDT$infobox <- NULL
-VarDisCharDT$strbox <- NULL
-VarDisCharDT$plotbox <- NULL
+VarDisDT <- reactiveValues()
+VarDisDT$infobox <- NULL
+VarDisDT$strbox <- NULL
+VarDisDT$plotbox <- NULL
 
 #------------------ str/message/error print --------------------
 
-output$infoDisCharDT <- renderPrint({
-  req(VarDisCharDT$infobox)
-  if (is.null(VarDisCharDT$infobox)) return()
-  print(VarDisCharDT$infobox)
+output$infoDisDT <- renderPrint({
+  req(VarDisDT$infobox)
+  if (is.null(VarDisDT$infobox)) return()
+  print(VarDisDT$infobox)
 })
 
-output$srtDisCharDT <- renderPrint({
-  req(VarDisCharDT$strbox)
-  if (is.null(VarDisCharDT$strbox)) return()
-  print(str(VarDisCharDT$strbox))
+output$srtDisDT <- renderPrint({
+  req(VarDisDT$strbox)
+  if (is.null(VarDisDT$strbox)) return()
+  print(str(VarDisDT$strbox))
 })
 
 #------------------ enable/disable/reset --------------------
 
 
-observeEvent(input$ResetDisCharDT, {
-  VarDisCharDT$infobox <- NULL
-  VarDisCharDT$strbox <- NULL
-  VarDisCharDT$plotbox <- 0
+observeEvent(input$ResetDisDT, {
+  VarDisDT$infobox <- NULL
+  VarDisDT$strbox <- NULL
+  VarDisDT$plotbox <- 0
   reset("DisCharDTReset")
 })
 
 
 #------------------ Plot Tree --------------------
 
-HeightDisCharDT <- reactive(input$HeightDisCharDT[1])
-WidthDisCharDT <- reactive(input$WidthDisCharDT[1])
+HeightDisDT <- reactive(input$HeightDisDT[1])
+WidthDisDT <- reactive(input$WidthDisDT[1])
 
-output$plotDisCharDT <- renderPlot( height = HeightDisCharDT  , width = WidthDisCharDT,{
+output$plotDisDT <- renderPlot( height = HeightDisDT  , width = WidthDisDT,{
   
-  if(is.null(treeDisCharDT())){
+  if(is.null(treeDisDT())){
     return()
-  }else if (VarDisCharDT$plotbox == 0){
+  }else if (VarDisDT$plotbox == 0){
     return()} 
   else{
-    if(input$ladderizeDisCharDT == "regular"){
-      tree <-treeDisCharDT()
-    }else if(input$ladderizeDisCharDT == "ascending"){
-      tree <- ladderize(treeDisCharDT(), right = F)
-    }else if(input$ladderizeDisCharDT == "descending"){
-      tree <- ladderize(treeDisCharDT(), right = T)
+    if(input$ladderizeDisDT == "regular"){
+      tree <-treeDisDT()
+    }else if(input$ladderizeDisDT == "ascending"){
+      tree <- ladderize(treeDisDT(), right = F)
+    }else if(input$ladderizeDisDT == "descending"){
+      tree <- ladderize(treeDisDT(), right = T)
     }
     
     
     
     
-    if(input$typeDisCharDT == "fan" | input$typeDisCharDT == 'radial'  ){
-      plot.phylo(tree,plot = input$ViewPlotDisCharDT,
-                 use.edge.length = input$edgeLenghtDisCharDT,
-                 type = input$typeDisCharDT, 
-                 edge.width = input$edgeWidthDisCharDT,
-                 edge.lty = as.numeric(input$edgetlyDisCharDT),
-                 rotate.tree = input$rotateTreeDisCharDT,#
-                 open.angle = input$openAngleDisCharDT,#
-                 show.node.label = input$nodelabelDisCharDT,
-                 node.width = input$nodeWidthDisCharDT,
-                 node.lty = input$odeltyDisCharDT,
-                 show.tip.label = input$tipLabelsDisCharDT,
-                 align.tip.label = input$aligntiplabelDisCharDT,
-                 font = as.numeric(input$fontDisCharDT),
-                 cex = input$cexDisCharDT,
-                 adj = as.numeric(input$adjDisCharDT),
-                 srt = input$srtDisCharDT,
-                 label.offset = input$labeloffsetDisCharDT,
-                 underscore = input$labeloffsetDisCharDT,
-                 lab4ut = input$lab4utDisCharDT,
-                 #direction = input$directionDisCharDT,
-                 no.margin = input$nomarginDisCharDT,
-                 #x.lim = input$xlimDisCharDT,
-                 #y.lim = input$ylimDisCharDT,
-                 direction = input$directionDisCharDT
+    if(input$typeDisDT == "fan" | input$typeDisDT == 'radial'  ){
+      plot.phylo(tree,plot = input$ViewPlotDisDT,
+                 use.edge.length = input$edgeLenghtDisDT,
+                 type = input$typeDisDT, 
+                 edge.width = input$edgeWidthDisDT,
+                 edge.lty = as.numeric(input$edgetlyDisDT),
+                 rotate.tree = input$rotateTreeDisDT,#
+                 open.angle = input$openAngleDisDT,#
+                 show.node.label = input$nodelabelDisDT,
+                 node.width = input$nodeWidthDisDT,
+                 node.lty = input$odeltyDisDT,
+                 show.tip.label = input$tipLabelsDisDT,
+                 align.tip.label = input$aligntiplabelDisDT,
+                 font = as.numeric(input$fontDisDT),
+                 cex = input$cexDisDT,
+                 adj = as.numeric(input$adjDisDT),
+                 srt = input$srtDisDT,
+                 label.offset = input$labeloffsetDisDT,
+                 underscore = input$labeloffsetDisDT,
+                 lab4ut = input$lab4utDisDT,
+                 #direction = input$directionDisDT,
+                 no.margin = input$nomarginDisDT,
+                 #x.lim = input$xlimDisDT,
+                 #y.lim = input$ylimDisDT,
+                 direction = input$directionDisDT
                  
                  
                  
                  
       )
     }else{
-      plot.phylo(tree,plot = input$ViewPlotDisCharDT,
-                 use.edge.length = input$edgeLenghtDisCharDT,
-                 type = input$typeDisCharDT, 
-                 edge.width = input$edgeWidthDisCharDT,
-                 edge.lty = as.numeric(input$edgetlyDisCharDT),
-                 show.node.label = input$nodelabelDisCharDT,
-                 node.width = input$nodeWidthDisCharDT,
-                 node.lty = input$odeltyDisCharDT,
-                 show.tip.label = input$tipLabelsDisCharDT,
-                 align.tip.label = input$aligntiplabelDisCharDT,
-                 font = as.numeric(input$fontDisCharDT),
-                 cex = input$cexDisCharDT,
-                 adj = as.numeric(input$adjDisCharDT),
-                 srt = input$srtDisCharDT,
-                 label.offset = input$labeloffsetDisCharDT,
-                 underscore = input$labeloffsetDisCharDT,
-                 lab4ut = input$lab4utDisCharDT,
-                 no.margin = input$nomarginDisCharDT,
-                 #x.lim = input$xlimDisCharDT,
-                 #y.lim = input$ylimDisCharDT,
-                 direction = input$directionDisCharDT
+      plot.phylo(tree,plot = input$ViewPlotDisDT,
+                 use.edge.length = input$edgeLenghtDisDT,
+                 type = input$typeDisDT, 
+                 edge.width = input$edgeWidthDisDT,
+                 edge.lty = as.numeric(input$edgetlyDisDT),
+                 show.node.label = input$nodelabelDisDT,
+                 node.width = input$nodeWidthDisDT,
+                 node.lty = input$odeltyDisDT,
+                 show.tip.label = input$tipLabelsDisDT,
+                 align.tip.label = input$aligntiplabelDisDT,
+                 font = as.numeric(input$fontDisDT),
+                 cex = input$cexDisDT,
+                 adj = as.numeric(input$adjDisDT),
+                 srt = input$srtDisDT,
+                 label.offset = input$labeloffsetDisDT,
+                 underscore = input$labeloffsetDisDT,
+                 lab4ut = input$lab4utDisDT,
+                 no.margin = input$nomarginDisDT,
+                 #x.lim = input$xlimDisDT,
+                 #y.lim = input$ylimDisDT,
+                 direction = input$directionDisDT
                  
                  
       )
@@ -123,16 +123,16 @@ output$plotDisCharDT <- renderPlot( height = HeightDisCharDT  , width = WidthDis
 
 #------------------ Read phylogeny --------------------
 
-treeDisCharDT <-eventReactive(input$loadTreeDisCharDT,{
-  if (input$EgTreeDisCharDT == T){
+treeDisDT <-eventReactive(input$loadTreeDisDT,{
+  if (input$EgTreeDisDT == T){
     readRDS("examples/anoleTree.RDS")
   }else{
-    req(input$treeDisCharDT)
-    validate(need(input$treeDisCharDT$datapath != "", "Please select a file or active example"))
-    if (is.nexus(input$treeDisCharDT$datapath) == T) {
-      read.nexus(file = input$treeDisCharDT$datapath)
+    req(input$treeDisDT)
+    validate(need(input$treeDisDT$datapath != "", "Please select a file or active example"))
+    if (is.nexus(input$treeDisDT$datapath) == T) {
+      read.nexus(file = input$treeDisDT$datapath)
     } else {
-      read.tree(file = input$treeDisCharDT$datapath)
+      read.tree(file = input$treeDisDT$datapath)
     }
   }
 })
@@ -140,9 +140,9 @@ treeDisCharDT <-eventReactive(input$loadTreeDisCharDT,{
 
 
 # Send Info
-observeEvent(input$loadTreeDisCharDT, {
-  VarDisCharDT$plotbox <- 1 # active plotbox
-  VarDisCharDT$infobox <- VarDisCharDT$strbox <- treeDisCharDT()
+observeEvent(input$loadTreeDisDT, {
+  VarDisDT$plotbox <- 1 # active plotbox
+  VarDisDT$infobox <- VarDisDT$strbox <- treeDisDT()
   
 })
 
@@ -151,22 +151,22 @@ observeEvent(input$loadTreeDisCharDT, {
 
 #------------------ Read Data --------------------
 
-csvDisCharDT <-eventReactive(input$loadCSVDisCharDT,{
-  if (input$EgCSVDisCharDT == T){
+csvDisDT <-eventReactive(input$loadCSVDisDT,{
+  if (input$EgCSVDisDT == T){
     readRDS("examples/anoleData.RDS")
   }else{
-    req(input$csvDisCharDT)
-    validate(need(input$csvDisCharDT$datapath != "", "Please select a file or active example"))
-    read.csv(file = input$csvDisCharDT$datapath, header = T, row.names = 1)
+    req(input$csvDisDT)
+    validate(need(input$csvDisDT$datapath != "", "Please select a file or active example"))
+    read.csv(file = input$csvDisDT$datapath, header = T, row.names = 1)
   }
 })
 
 
 
 # Send Info
-observeEvent(input$loadCSVDisCharDT, {
-  VarDisCharDT$infobox <- head(csvDisCharDT())
-  VarDisCharDT$strbox <- list("phy" = treeDisCharDT(), "data" = csvDisCharDT())
+observeEvent(input$loadCSVDisDT, {
+  VarDisDT$infobox <- head(csvDisDT())
+  VarDisDT$strbox <- list("phy" = treeDisDT(), "data" = csvDisDT())
   
 })
 
@@ -176,44 +176,44 @@ observeEvent(input$loadCSVDisCharDT, {
 #------------------ Check names and Solve --------------------
 
 # Check names
-ckcnames <- eventReactive(input$chckNamesDisCharDT == T,{
-  req(treeDisCharDT())
-  ckcnames <- geiger::name.check(treeDisCharDT(), csvDisCharDT())
+ckcnames <- eventReactive(input$chckNamesDisDT == T,{
+  req(treeDisDT())
+  ckcnames <- geiger::name.check(treeDisDT(), csvDisDT())
   
   if(length(ckcnames)== 1){
     ckcnames <- "OK, no mismatch in names"
     
   } else{
     ckcnames$message <- "Please, resolve the mismatch"
-    output$RslvNamesDisCharDT <- renderUI({
-      actionButton(inputId = "MismatchDischarDT" ,label = "Resolve mismatch")
+    output$RslvNamesDisDT <- renderUI({
+      actionButton(inputId = "MismatchDisDT" ,label = "Resolve mismatch")
     })
   }
   return(ckcnames)
 })
 
 # Send message to infobox
-observeEvent(input$chckNamesDisCharDT,{
-  VarDisCharDT$infobox <- ckcnames()
+observeEvent(input$chckNamesDisDT,{
+  VarDisDT$infobox <- ckcnames()
 })
 
 #Solve mismatch
 
-MatchDisCharDT <- eventReactive(input$MismatchDischarDT, {
+MatchDisDT <- eventReactive(input$MismatchDisDT, {
   req(ckcnames())
-  geiger::treedata(treeDisCharDT(), csvDisCharDT())
+  geiger::treedata(treeDisDT(), csvDisDT())
 })
 
 # Send message to infobox
-observeEvent(input$MismatchDischarDT,{
+observeEvent(input$MismatchDisDT,{
   
-  treeDisCharDT <- reactive({req(MatchDisCharDT())
-    MatchDisCharDT()$phy})
-  csvDisCharDT <- reactive({req(MatchDisCharDT())
-    MatchDisCharDT()$data})
+  treeDisDT <- reactive({req(MatchDisDT())
+    MatchDisDT()$phy})
+  csvDisDT <- reactive({req(MatchDisDT())
+    MatchDisDT()$data})
   
-  VarDisCharDT$infobox <- paste("Tips in tree:",length(treeDisCharDT()$phy$tip.label),";", "Tips in data:",nrow(csvDisCharDT()-1))
-  VarDisCharDT$strbox <-  MatchDisCharDT()
+  VarDisDT$infobox <- paste("Tips in tree:",length(treeDisDT()$phy$tip.label),";", "Tips in data:",nrow(csvDisDT()-1))
+  VarDisDT$strbox <-  MatchDisDT()
   
 })
 
@@ -223,40 +223,40 @@ observeEvent(input$MismatchDischarDT,{
 #Dynamic input selection (Variables)
 #Note: when there is only one option you should use list(), but there are more than one you could code names() straightforward
 #
-observeEvent(csvDisCharDT(), {
-  numvar <- which(lapply(csvDisCharDT(), class) == 'numeric' | lapply(csvDisCharDT(), class) == 'integer')
-  factvar <- which(lapply(csvDisCharDT(), class) == 'factor' | lapply(csvDisCharDT(), class) == 'character')
+observeEvent(csvDisDT(), {
+  numvar <- which(lapply(csvDisDT(), class) == 'numeric' | lapply(csvDisDT(), class) == 'integer')
+  factvar <- which(lapply(csvDisDT(), class) == 'factor' | lapply(csvDisDT(), class) == 'character')
   if (length(numvar) == 0) {
     if (length(factvar) > 1) {
-      updateSelectInput(session, "chooseVarDisCharDT",
+      updateSelectInput(session, "chooseVarDisDT",
                         choices=list('Select','Discrete Char'= names(factvar)))
     } else {
-      updateSelectInput(session, "chooseVarDisCharDT",
+      updateSelectInput(session, "chooseVarDisDT",
                         choices=list('Select','Discrete Char'= list(names(factvar))))
     }
   } else if (length(factvar) == 0) {
     if (length(numvar) > 1){
-      updateSelectInput(session, "chooseVarDisCharDT",
+      updateSelectInput(session, "chooseVarDisDT",
                         choices=list('Select','Continuou Char'= names(numvar)))
     }else{
-      updateSelectInput(session, "chooseVarDisCharDT",
+      updateSelectInput(session, "chooseVarDisDT",
                         choices=list('Select','Continuou Char'= list(names(numvar))))
     }
   } else {
     if (length(factvar) > 1 & length(numvar) == 1) {
-      updateSelectInput(session, "chooseVarDisCharDT",selected = NULL,
+      updateSelectInput(session, "chooseVarDisDT",selected = NULL,
                         choices = list('Select','Discrete Char'= names(factvar),
                                        'Continuou Char'= list(names(numvar))))
     } else if (length(factvar) == 1 & length(numvar) > 1) {
-      updateSelectInput(session, "chooseVarDisCharDT",selected = NULL,
+      updateSelectInput(session, "chooseVarDisDT",selected = NULL,
                         choices=list('Select','Discrete Char'= list(names(factvar)),
                                      'Continuou Char'= names(numvar)))
     } else if (length(factvar) == 1 & length(numvar) == 1) {
-      updateSelectInput(session, "chooseVarDisCharDT",selected = NULL,
+      updateSelectInput(session, "chooseVarDisDT",selected = NULL,
                         choices=list('Select','Discrete Char'= list(names(factvar)),'
                                                Continuou Char'= list(names(numvar))))
     } else {
-      updateSelectInput(session, "chooseVarDisCharDT",selected = NULL,
+      updateSelectInput(session, "chooseVarDisDT",selected = NULL,
                         choices=list('Select','Discrete Char'= names(factvar),
                                      'Continuou Char'= names(numvar)))
     }
@@ -265,8 +265,8 @@ observeEvent(csvDisCharDT(), {
 
 # choose character
 
-charDischarDT <- eventReactive( input$chooseVarDisCharDT,{
-  col <-which(colnames(csvDisCharDT()) == input$chooseVarDisCharDT)
-  return(csvDisCharDT()[,col])
+charDisDT <- eventReactive( input$chooseVarDisDT,{
+  col <-which(colnames(csvDisDT()) == input$chooseVarDisDT)
+  return(csvDisDT()[,col])
 })
 
