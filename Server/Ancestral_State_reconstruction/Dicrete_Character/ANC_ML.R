@@ -210,9 +210,61 @@ observeEvent(!is.null(input$ModDisML),{
 })
 
 
+# Run Analysis
+observeEvent(input$RunDisML ,{
+  
+  SppData<-data.frame(Genus_sp=names(dataDisML()),x=dataDisML())
+  
+  # withProgress(message = 'Calculation in progress',
+  #              detail = 'This may take a while...', value = 0, {
+  #                
+  #                incProgress(1/2)
+                 
+                 if ( nStates()[1]== 2){
+                   if ('ER' %in% input$ModelsDisML ){
+                     AncDiscMl$outcorHMM$ER <- corHMM(treeDisML(),SppData,node.states=input$typeDisML[1],
+                                                      rate.cat=1,rate.mat=matrix(c(NA,1,1,NA),2,2),root.p=c(0.5,0.5))}
+                   if ('ARD' %in% input$ModelsDisML){
+                     AncDiscMl$outcorHMM$ARD <- corHMM(treeDisML(),SppData,node.states=input$typeDisML[1],
+                                                       rate.cat=1,rate.mat=matrix(c(NA,1,2,NA),2,2),root.p=c(0.5,0.5))}
+                   if ('Ireversible01' %in% input$ModelsDisML){
+                     AncDiscMl$outcorHMM$Ireversible01 <- corHMM(treeDisML(),SppData,node.states=input$typeDisML[1],
+                                                                 rate.cat=1,rate.mat=matrix(c(NA,0,1,NA),2,2),root.p=c(0.5,0.5))}
+                   if ('Ireversible10' %in% input$ModelsDisML){
+                     AncDiscMl$outcorHMM$Ireversible10<- corHMM(treeDisML(),SppData,node.states=input$typeDisML[1],
+                                                                rate.cat=1,rate.mat=matrix(c(NA,1,0,NA),2,2),root.p=c(0.5,0.5))}
+                 }
+                 
+                 if ( nStates()[1] > 2){
+                   
+                   num <- which( names(AncDiscMl$multiStatesModels) %in% input$ModelsDisML)
+                   
+                   for (i in num){
+                     
+                     AncDiscMl$outcorHMM$x <- corHMM(treeDisML(),SppData,node.states=input$typeDisML[1],
+                                                     rate.cat=1,rate.mat=AncDiscMl$multiStatesModels[[i]])
+                     names(AncDiscMl$outcorHMM)[length(AncDiscMl$outcorHMM)] <- names(AncDiscMl$multiStatesModels)[i]
+                     
+                   }
+                   
+                   
+                 }
+                 
+               #   incProgress(2/2)
+               #   
+               #   
+               # })
+  
+  
+})
 
-#'
-#'next time add to run mono and polymorphic character
+## info panel
+observeEvent(!is.null(input$RunAnalyDisML ),{
+  AncDiscMl$objectDiscreteML <- AncDiscMl$outcorHMM
+})
+
+
+
 
 
 #------------------ Plot Tree --------------------
@@ -236,9 +288,7 @@ output$plotDisML <- renderPlot( height = HeightDisML  , width = WidthDisML,{
       tree <- ladderize(treeDisML(), right = T)
     }
     
-    
-    
-    
+
     if(input$typeDisML == "fan" | input$typeDisML == 'radial'  ){
       plot.phylo(tree,plot = input$ViewPlotDisML,
                  use.edge.length = input$edgeLenghtDisML,
