@@ -516,7 +516,7 @@ shinyUI(navbarPage(title = div( "", img(src = "Picture1.png",
                                                                                                                  actionButton('SubmAddModel','Submit')),
                                                                                                 actionButton('RunDisML','Run'), hr(),
                                                                                                 
-                                                                                                #---------------- add run analysis
+                                                                                                #---------------- mono and
                                                                                                
                                                                                                                 
                                                                                                               
